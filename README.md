@@ -12,7 +12,7 @@ Insert the following values into the console when asked for a URL:
   ```
 - Nothing. The first catalog page will be scraped.
 
-## 1. How to close the program.
+## 2. How to close the program.
 Insert the following command into the console when asked for a URL:
   ```
   exit
