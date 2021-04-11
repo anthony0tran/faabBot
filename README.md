@@ -1,7 +1,7 @@
 # faabBot by Anthony
 
 ## 1. How to use.
-Insert the following values into the console when asked for a URL:
+Insert the following values into the console when asked for an URL:
 - The URL of the item page. 
   ```
   https://www.example.com/goods/xxxxxxx
@@ -13,7 +13,7 @@ Insert the following values into the console when asked for a URL:
 - Nothing. The first catalog page will be scraped.
 
 ## 2. How to close the program.
-Insert the following command into the console when asked for a URL:
+Insert the following command into the console when asked for an URL:
   ```
   exit
   ```
