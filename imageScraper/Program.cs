@@ -11,10 +11,11 @@ namespace imageScraper
         {
             Console.Title = "FaabBot";
             PrintStartupArt();
-
+            Console.WriteLine("Type 'help' for more information.");
+            
             while (_urlInput != "exit")
             {
-                Console.WriteLine("Type 'help' for more information\nPlease insert the URL, and then press Enter");
+                Console.WriteLine("\nPlease insert the URL, and then press Enter");
                 _urlInput = Console.ReadLine();
 
                 while (!IsUrlValid(_urlInput) && _urlInput != "exit" && !int.TryParse(_urlInput, out _))
@@ -42,7 +43,7 @@ namespace imageScraper
                 InitScraping(_urlInput);
             }
 
-            Environment.Exit(0);
+            Console.WriteLine("Sessions terminated... \nExit by closing this window.");
         }
 
         /*
@@ -116,12 +117,13 @@ namespace imageScraper
         private static void PrintHelp()
         {
             Console.WriteLine(@"
-                1. An URL to the item page. Example: https://zozo.jp/shop/bapeland/goods/32485477/?did=56620270&rid=1019
-                2. An integer, this is the index of the catalog. Example: 8
-                3. Nothing. The whole first catalog will be scraped if the user presses Enter without providing data.
-                4. Type 'exit' to close the console.
+    The following things can be typed into the console:
+    1. An URL to the item page. Example: https://example.jp/shop/xxxxx/goods/32485477/?did=56xxx270&rid=1019
+    2. An integer, this is the index of the catalog. Example: 8
+    3. Nothing. The whole first catalog will be scraped if the user presses Enter without providing data.
+    4. Type 'exit' to close the console.
 
-                Go to 'https://github.com/anthony0tran/faabBot' for more information.
+    Go to 'https://github.com/anthony0tran/faabBot' for more information.
             ");
             Console.WriteLine("\nPlease insert the URL, and then press Enter");
             _urlInput = Console.ReadLine();
