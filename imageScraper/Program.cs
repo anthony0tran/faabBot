@@ -13,10 +13,18 @@ namespace imageScraper
             
             while (_urlInput != "exit")
             {
-                Console.WriteLine("Please insert URL:");
+                Console.WriteLine("Type 'help' for more information\nPlease insert the URL, and then press Enter");
                 _urlInput = Console.ReadLine();
 
-                while (!IsUrlValid(_urlInput) && _urlInput != "exit")
+                if (_urlInput == "help")
+                {
+                    PrintHelp();
+                    Console.WriteLine("\nPlease insert URL:");
+                    _urlInput = Console.ReadLine();
+                }
+                
+                while (!IsUrlValid(_urlInput) && _urlInput != "exit" && !int.TryParse(_urlInput, out _) &&
+                       _urlInput != "help")
                 {
                     Console.WriteLine("Invalid URL!\n");
                     Console.WriteLine("Please insert URL:");
@@ -97,6 +105,18 @@ namespace imageScraper
 /_/    \__,_/\__,_/_.___/_____/\____/\__/  /_.___/\__, /  /_/  |_/_/ /_/\__/_/ /_/\____/_/ /_/\__, /  
                                                  /____/                                      /____/   ";
             Console.WriteLine(asciiArt + "\n");
+        }
+
+        private static void PrintHelp()
+        {
+            Console.WriteLine(@"
+                1. An URL to the item page. Example: https://zozo.jp/shop/bapeland/goods/32485477/?did=56620270&rid=1019
+                2. An integer, this is the index of the catalog. Example: 8
+                3. Nothing. The whole first catalog will be scraped if the user presses Enter without providing data.
+                4. Type 'exit' to close the console.
+
+                Go to 'https://github.com/anthony0tran/faabBot' for more information.
+            ");
         }
     }
 }
