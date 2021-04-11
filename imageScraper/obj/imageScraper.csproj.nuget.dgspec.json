@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\antho\\Desktop\\imageScraper\\imageScraper\\imageScraper.csproj": {}
+    "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\imageScraper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\antho\\Desktop\\imageScraper\\imageScraper\\imageScraper.csproj": {
+    "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\imageScraper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\antho\\Desktop\\imageScraper\\imageScraper\\imageScraper.csproj",
+        "projectUniqueName": "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\imageScraper.csproj",
         "projectName": "imageScraper",
-        "projectPath": "C:\\Users\\antho\\Desktop\\imageScraper\\imageScraper\\imageScraper.csproj",
+        "projectPath": "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\imageScraper.csproj",
         "packagesPath": "C:\\Users\\antho\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\antho\\Desktop\\imageScraper\\imageScraper\\obj\\",
+        "outputPath": "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\antho\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -62,7 +62,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\antho\\.dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -21,6 +21,7 @@ namespace imageScraper
 
         private static readonly WebClient WebClient = new();
 
+        // This value is appended to the image name.
         private static int _globalDownloadCounter;
 
         /*
@@ -30,6 +31,7 @@ namespace imageScraper
         public static IEnumerable<string> GetItemsUrl(string url)
         {
             _catalogDriver = new ChromeDriver(ChromeDriverPath);
+            
             
             // var driver = new ChromeDriver(ChromeDriverPath);
             _catalogDriver.Navigate().GoToUrl(url);
@@ -57,9 +59,12 @@ namespace imageScraper
          */
         public static void DownloadImages(string url)
         {
+            var options = new ChromeOptions();
+            options.AddArgument("--log-level=OFF");
             // Get the path to the Drivers directory. This will be used by ChromeDriver to access chromedriver.exe
             var chromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
-            var itemDriver = new ChromeDriver(chromeDriverPath);
+            var itemDriver = new ChromeDriver(chromeDriverPath, options);
+            
             itemDriver.Navigate().GoToUrl(url);
 
             // This is a collection of the different color variants of the item. These objects are clicked to show the actual image.
@@ -74,7 +79,7 @@ namespace imageScraper
             for (var i = 0; i < itemColorsTags.Count; i++)
             {
                 itemColors[i].Click();
-                Thread.Sleep(1000);
+                Thread.Sleep(800);
 
                 var imageObject = itemDriver.FindElementByXPath("//div[@id=\"photoMain\"]/img");
                 var imageSource = imageObject.GetAttribute("src");
@@ -83,12 +88,15 @@ namespace imageScraper
                 // itemName may contain illegal characters. Replace all illegal characters with _
                 itemName = Path.GetInvalidPathChars().Aggregate(itemName, (current, character) => current.Replace(character, '_'));
 
+                // Also replace all forward slashes. This causes a fetal error and is not filtered by the filter above.
+                itemName = itemName.Replace("/", "-");
+                
                 // File name consist of "Name" + "imageIteration" + "itemIteration"
                 WebClient.DownloadFile(imageSource, DownloadsPath + @"\" + itemName + i + "_" + _globalDownloadCounter + ".jpg");
                 _globalDownloadCounter++;
             }
 
-            Console.WriteLine("Downloaded images from: " + url);
+            Console.WriteLine("\nDownloaded images from: " + url);
             itemDriver.Close();
         }
     }
