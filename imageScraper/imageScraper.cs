@@ -40,14 +40,12 @@ namespace imageScraper
 
             // Get all <img class="o-responsive-thumbnail__image">. This is the collection of clickable items.
             var items = _catalogDriver.FindElements(By.ClassName("c-catalog-header__link"));
-
-            Console.WriteLine("items: " + items.Count);
-
+            
             var itemsUrl = items.Select(item => item.GetAttribute("href")).ToList();
             
             Thread.Sleep(1000);
 
-            Console.WriteLine("Item count: " + items.Count);
+            Console.WriteLine("Amount of items to scrape: " + items.Count);
 
             _catalogDriver.Close();
             return itemsUrl;

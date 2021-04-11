@@ -5,37 +5,40 @@ namespace imageScraper
     internal static class Program
     {
         private static string _urlInput = "";
+        private const double Version = 0.1;
 
         private static void Main(string[] args)
         {
             Console.Title = "FaabBot";
             PrintStartupArt();
-            
+
             while (_urlInput != "exit")
             {
                 Console.WriteLine("Type 'help' for more information\nPlease insert the URL, and then press Enter");
                 _urlInput = Console.ReadLine();
 
-                if (_urlInput == "help")
+                while (!IsUrlValid(_urlInput) && _urlInput != "exit" && !int.TryParse(_urlInput, out _))
                 {
-                    PrintHelp();
-                    Console.WriteLine("\nPlease insert URL:");
-                    _urlInput = Console.ReadLine();
+                    if (_urlInput == "help")
+                    {
+                        PrintHelp();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid URL!\n");
+                        Console.ResetColor();
+                        Console.WriteLine("Please insert the URL, and then press Enter");
+                        _urlInput = Console.ReadLine();
+                    }
                 }
-                
-                while (!IsUrlValid(_urlInput) && _urlInput != "exit" && !int.TryParse(_urlInput, out _) &&
-                       _urlInput != "help")
-                {
-                    Console.WriteLine("Invalid URL!\n");
-                    Console.WriteLine("Please insert URL:");
-                    _urlInput = Console.ReadLine();
-                }
-                
+
+
                 if (_urlInput == "exit")
                 {
                     break;
                 }
-                
+
                 InitScraping(_urlInput);
             }
 
@@ -98,13 +101,16 @@ namespace imageScraper
 
         private static void PrintStartupArt()
         {
-            const string asciiArt = @"    ______            __    ____        __     __             ___          __  __                     
+            const string asciiArt =
+                @"    ______            __    ____        __     __             ___          __  __                     
    / ____/___ _____ _/ /_  / __ )____  / /_   / /_  __  __   /   |  ____  / /_/ /_  ____  ____  __  __
   / /_  / __ `/ __ `/ __ \/ __  / __ \/ __/  / __ \/ / / /  / /| | / __ \/ __/ __ \/ __ \/ __ \/ / / /
  / __/ / /_/ / /_/ / /_/ / /_/ / /_/ / /_   / /_/ / /_/ /  / ___ |/ / / / /_/ / / / /_/ / / / / /_/ / 
 /_/    \__,_/\__,_/_.___/_____/\____/\__/  /_.___/\__, /  /_/  |_/_/ /_/\__/_/ /_/\____/_/ /_/\__, /  
                                                  /____/                                      /____/   ";
-            Console.WriteLine(asciiArt + "\n");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(asciiArt + "v" + Version + "\n");
+            Console.ResetColor();
         }
 
         private static void PrintHelp()
@@ -117,6 +123,8 @@ namespace imageScraper
 
                 Go to 'https://github.com/anthony0tran/faabBot' for more information.
             ");
+            Console.WriteLine("\nPlease insert the URL, and then press Enter");
+            _urlInput = Console.ReadLine();
         }
     }
 }
