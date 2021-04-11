@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "dSn3xU5I+W0/fIciAGWOJRnyDCjsWL9+HpbliAMEQB9ArNC8d+jZfTc+6M01IpaXtioG2vvLIJqUpzIMGfIKWg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\antho\\Desktop\\imageScraper\\imageScraper\\imageScraper.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\antho\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
+    "C:\\Users\\antho\\.nuget\\packages\\selenium.chrome.webdriver\\85.0.0\\selenium.chrome.webdriver.85.0.0.nupkg.sha512",
+    "C:\\Users\\antho\\.nuget\\packages\\selenium.webdriver\\4.0.0-beta2\\selenium.webdriver.4.0.0-beta2.nupkg.sha512"
+  ],
+  "logs": []
+}
