@@ -5,6 +5,7 @@ namespace imageScraper
     internal static class Program
     {
         private static string _urlInput = "";
+        private const double Version = 0.1;
 
         private static void Main(string[] args)
         {
@@ -96,7 +97,7 @@ namespace imageScraper
  / __/ / /_/ / /_/ / /_/ / /_/ / /_/ / /_   / /_/ / /_/ /  / ___ |/ / / / /_/ / / / /_/ / / / / /_/ / 
 /_/    \__,_/\__,_/_.___/_____/\____/\__/  /_.___/\__, /  /_/  |_/_/ /_/\__/_/ /_/\____/_/ /_/\__, /  
                                                  /____/                                      /____/   ";
-            Console.WriteLine(asciiArt + "\n");
+            Console.WriteLine(asciiArt + "v" + Version + "\n");
         }
     }
 }
