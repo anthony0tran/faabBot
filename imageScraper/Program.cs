@@ -27,11 +27,11 @@ namespace imageScraper
                 {
                     break;
                 }
-                
+
                 InitScraping(_urlInput);
             }
 
-            Environment.Exit(0);
+            Console.WriteLine("Sessions terminated...\nExit by closing this console window.");
         }
 
         /*
