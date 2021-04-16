@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,7 +9,7 @@ using OpenQA.Selenium.Chrome;
 
 namespace imageScraper
 {
-    public class ImageScraper
+    public static class ImageScraper
     {
         // Get the path to the Drivers directory. This will be used by ChromeDriver to access chromedriver.exe
         private static readonly string ChromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
@@ -28,7 +27,7 @@ namespace imageScraper
 
         private static List<string> _productList;
 
-        public static IEnumerable<string> GetAllProducts(string url)
+        private static void GetAllProducts(string url)
         {
             _productList = new List<string>();
 
@@ -57,20 +56,22 @@ namespace imageScraper
                     Console.WriteLine("productList count: " + _productList.ToList().Count);
                 }
             }
-
-            return _productList;
         }
 
         public static void DownloadAllImages(string url)
         {
             GetAllProducts(url);
-
+            
             foreach (var productUrl in _productList)
             {
                 DownloadImages(productUrl);
             }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Finished scraping " + _productList.Count + " products.");
+            Console.ResetColor();
         }
-        
+
         /*
          *  This function gets all products on the catalog page. Duplicate URLs are only added once. 
          *  <param name="url">The URL of the catalog page</param>
@@ -193,17 +194,18 @@ namespace imageScraper
             return id;
         }
 
-        public static void DownloadImages(string url)
+        private static void DownloadImages(string url, ChromeDriver driver = null)
         {
             var productDriver = new ChromeDriver(ChromeDriverPath);
             productDriver.Navigate().GoToUrl(url);
-            
+            Thread.Sleep(1000);
+
             // Look for the unordered lists (p-goods-add-cart-list). Each <ul> belongs to a color variant of the product.
             var ulObjects = productDriver.FindElementsByClassName("p-goods-add-cart-list");
             // This is a collection of the different color variants of the item. These objects are clicked to show the actual image.
             var itemColors = productDriver.FindElements(By.ClassName("p-goods-thumbnail-list__item"));
             var colorIndexCounter = 0;
-            
+
             foreach (var ulObject in ulObjects)
             {
                 var availableSizes = new List<string>();
@@ -220,7 +222,6 @@ namespace imageScraper
 
                 if (availableSizes.Count > 0)
                 {
-                    Console.WriteLine("ul: " + ulObjects.Count);
                     itemColors[colorIndexCounter].Click();
                     Thread.Sleep(800);
 
@@ -243,13 +244,13 @@ namespace imageScraper
                     }
 
                     WebClient.DownloadFile(imageSource,
-                        DownloadsPath + @"\" + itemName + _globalDownloadCounter + ".jpg");
+                        DownloadsPath + @"\" + itemName + "_i" + _globalDownloadCounter + ".jpg");
                     _globalDownloadCounter++;
                 }
 
                 colorIndexCounter++;
             }
-            
+
             productDriver.Quit();
         }
     }

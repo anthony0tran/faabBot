@@ -13,56 +13,31 @@ namespace imageScraper
             PrintStartupArt();
             Console.WriteLine("Type 'help' for more information.");
 
-            var userInput = Console.ReadLine();
-            ImageScraper.DownloadAllImages(userInput);
-            
- 
-            Console.WriteLine("Sessions terminated... \nExit by closing this window.");
+            while (_urlInput != "exit")
+            {
+                InitScraping();
+            }
+
+
+            Console.WriteLine("Sessions terminated... \nClosing this window...");
         }
 
         /*
          *  This function is called when all prerequisites is in order.
          *  <param name="urlInput">The URL inserted in the console by the user.</param>
          */
-        // private static void InitScraping(string urlInput)
-        // {
-        //     // Fetch the whole catalog if no url is provided.
-        //     if (urlInput == string.Empty)
-        //     {
-        //         // Fetch all the urls to the items.
-        //         var itemsUrls = ImageScraper.GetAllProductsOnPage("https://zozo.jp/shop/bapeland/");
-        //
-        //         // Download the images per item.
-        //         foreach (var url in itemsUrls)
-        //         {
-        //             ImageScraper.DownloadImages(url);
-        //         }
-        //     }
-        //     // Fetch the whole catalog on the specified page number if an integer is provided.
-        //     else if (int.TryParse(urlInput, out _))
-        //     {
-        //         // Fetch all the urls to the items on the given catalog page.
-        //         var itemsUrls = ImageScraper.GetAllProductsOnPage("https://zozo.jp/shop/bapeland/?pno=" + urlInput);
-        //
-        //         // Download the images per item.
-        //         foreach (var url in itemsUrls)
-        //         {
-        //             ImageScraper.DownloadImages(url);
-        //         }
-        //     }
-        //     else
-        //     {
-        //         try
-        //         {
-        //             ImageScraper.DownloadImages(urlInput);
-        //         }
-        //         catch (Exception e)
-        //         {
-        //             Console.WriteLine(e);
-        //             throw;
-        //         }
-        //     }
-        // }
+        private static void InitScraping()
+        {
+            Console.WriteLine("Please insert the url, and then press Enter");
+            _urlInput = Console.ReadLine();
+
+            if (_urlInput == "exit")
+            {
+                return;
+            }
+
+            ImageScraper.DownloadAllImages(_urlInput);
+        }
 
         /*
          *  This function checks if the user input is a valid URL.
