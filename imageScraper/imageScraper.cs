@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -17,85 +18,239 @@ namespace imageScraper
         // Get the path to the Downloads directory. This directory will be filled with the downloaded images.
         private static readonly string DownloadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Downloads");
 
-        private static ChromeDriver _catalogDriver;
-
         private static readonly WebClient WebClient = new();
 
         // This value is appended to the image name.
         private static int _globalDownloadCounter;
 
+        private static int _highestPageIndex;
+        private static IEnumerable<string> _catalogUrls;
+
+        private static List<string> _productList;
+
+        public static IEnumerable<string> GetAllProducts(string url)
+        {
+            _productList = new List<string>();
+
+            if (_highestPageIndex == 0)
+            {
+                var tempProductList = GetAllProductsOnPage(url).ToList();
+
+                foreach (var product in tempProductList)
+                {
+                    _productList.Add(product);
+                }
+            }
+
+            if (_highestPageIndex > 0)
+            {
+                var baseUrl = GetCatalogBaseUrl(_catalogUrls);
+                for (var i = 2; i <= _highestPageIndex; i++)
+                {
+                    var tempProductList = GetAllProductsOnPage(baseUrl + i);
+
+                    foreach (var product in tempProductList)
+                    {
+                        _productList.Add(product);
+                    }
+
+                    Console.WriteLine("productList count: " + _productList.ToList().Count);
+                }
+            }
+
+            return _productList;
+        }
+
+        public static void DownloadAllImages(string url)
+        {
+            GetAllProducts(url);
+
+            foreach (var productUrl in _productList)
+            {
+                DownloadImages(productUrl);
+            }
+        }
+        
         /*
-         *  This function is executed when the browser is on the BapeLand catalog.
+         *  This function gets all products on the catalog page. Duplicate URLs are only added once. 
          *  <param name="url">The URL of the catalog page</param>
          */
-        public static IEnumerable<string> GetItemsUrl(string url)
+        private static IEnumerable<string> GetAllProductsOnPage(string url)
         {
-            _catalogDriver = new ChromeDriver(ChromeDriverPath);
-            
-            
-            // var driver = new ChromeDriver(ChromeDriverPath);
-            _catalogDriver.Navigate().GoToUrl(url);
+            var catalogDriver = new ChromeDriver(ChromeDriverPath);
+            var itemsUrl = new List<string>();
+
+            catalogDriver.Navigate().GoToUrl(url);
 
             Thread.Sleep(1000);
 
-            // Get all <img class="o-responsive-thumbnail__image">. This is the collection of clickable items.
-            var items = _catalogDriver.FindElements(By.ClassName("c-catalog-header__link"));
-            
-            var itemsUrl = items.Select(item => item.GetAttribute("href")).ToList();
-            
+            _catalogUrls = GetAllCatalogUrls(catalogDriver);
+
+            var catalogUrls = _catalogUrls.ToList();
+
+            if (catalogUrls.Count > 0)
+            {
+                _highestPageIndex = GetHighestCatalogIndex(catalogUrls);
+            }
+
             Thread.Sleep(1000);
 
-            Console.WriteLine("Amount of items to scrape: " + items.Count);
+            // Get all <div class="c-catalog-header">. This is the collection of clickable items.
+            var items = catalogDriver.FindElements(By.ClassName("c-catalog-header__link"));
 
-            _catalogDriver.Close();
+            foreach (var productHtmlObject in items)
+            {
+                if (itemsUrl.Count == 0)
+                {
+                    itemsUrl.Add(productHtmlObject.GetAttribute("href"));
+                }
+                else
+                {
+                    var lastProductId = GetIdFromUrl(itemsUrl[^1]);
+                    if (!productHtmlObject.GetAttribute("href").Contains(lastProductId.ToString()))
+                    {
+                        itemsUrl.Add(productHtmlObject.GetAttribute("href"));
+                    }
+                }
+            }
+
+            Console.WriteLine("Found " + itemsUrl.Count + " products on " + url);
+
+            catalogDriver.Quit();
+
             return itemsUrl;
         }
 
         /*
-         *  This function is executed when the browser is on the page of a specific item.
-         *  <param name="url">The URL of the item</param>
+         *  This function is called when the first catalog page is opened to determine all catalog pages for the category.
          */
-        public static void DownloadImages(string url)
+        private static IEnumerable<string> GetAllCatalogUrls(ChromeDriver catalogDriver)
         {
-            var options = new ChromeOptions();
-            options.AddArgument("--log-level=OFF");
-            // Get the path to the Drivers directory. This will be used by ChromeDriver to access chromedriver.exe
-            var chromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
-            var itemDriver = new ChromeDriver(chromeDriverPath, options);
-            
-            itemDriver.Navigate().GoToUrl(url);
+            var catalogUrls = new List<string>();
 
-            // This is a collection of the different color variants of the item. These objects are clicked to show the actual image.
-            var itemColors = itemDriver.FindElements(By.ClassName("p-goods-thumbnail-list__item"));
+            var catalogPages = catalogDriver.FindElementsByXPath("//li[@class=\"c-pager-page-number-list-item\"]/a");
 
-            /*
-             This is a collection of color tags. These tags are used to determine the download count per item.
-             Given only the first few pictures are tagged. (This will not work if the pattern is different)
-            */
-            var itemColorsTags = itemDriver.FindElements(By.ClassName("p-goods-photograph__name"));
-
-            for (var i = 0; i < itemColorsTags.Count; i++)
+            foreach (var catalogUrl in catalogPages)
             {
-                itemColors[i].Click();
-                Thread.Sleep(800);
-
-                var imageObject = itemDriver.FindElementByXPath("//div[@id=\"photoMain\"]/img");
-                var imageSource = imageObject.GetAttribute("src");
-                var itemName = itemDriver.FindElementByClassName("p-goods-information__heading").GetAttribute("innerHTML");
-
-                // itemName may contain illegal characters. Replace all illegal characters with _
-                itemName = Path.GetInvalidPathChars().Aggregate(itemName, (current, character) => current.Replace(character, '_'));
-
-                // Also replace all forward slashes. This causes a fetal error and is not filtered by the filter above.
-                itemName = itemName.Replace("/", "-");
-                
-                // File name consist of "Name" + "imageIteration" + "itemIteration"
-                WebClient.DownloadFile(imageSource, DownloadsPath + @"\" + itemName + i + "_" + _globalDownloadCounter + ".jpg");
-                _globalDownloadCounter++;
+                catalogUrls.Add(catalogUrl.GetAttribute("href"));
             }
 
-            Console.WriteLine("\nDownloaded images from: " + url);
-            itemDriver.Close();
+            return catalogUrls;
+        }
+
+        private static int GetHighestCatalogIndex(IEnumerable<string> catalogUrls)
+        {
+            const string urlPattern = "?pno=";
+
+            var highestIndexUrl = catalogUrls.ToList()[^1];
+
+            var index = highestIndexUrl.IndexOf(urlPattern, StringComparison.Ordinal);
+            var highestIndexString = highestIndexUrl[(index + urlPattern.Length)..];
+
+            int.TryParse(highestIndexString, out var highestIndex);
+            return highestIndex;
+        }
+
+        private static string GetCatalogBaseUrl(IEnumerable<string> catalogUrls)
+        {
+            const string urlPattern = "?pno=";
+            var enumerable = catalogUrls.ToList();
+            var index = enumerable[0].IndexOf(urlPattern, StringComparison.Ordinal);
+            var baseUrl = enumerable[0][..(index + urlPattern.Length)];
+
+            return baseUrl;
+        }
+
+        /*
+         *  Extract product ID from the url.
+         *  <param name="url">The URL of the product</param>
+         */
+        private static int GetIdFromUrl(string url)
+        {
+            var id = 0;
+            const string urlPattern = "goods/";
+
+            if (!url.Contains(urlPattern)) return id;
+
+            var index = url.IndexOf(urlPattern, StringComparison.Ordinal);
+            var subString = url[(index + urlPattern.Length)..];
+            var resultString = "";
+
+            foreach (var c in subString)
+            {
+                if (c != '/')
+                {
+                    resultString += c;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            int.TryParse(resultString, out id);
+
+            return id;
+        }
+
+        public static void DownloadImages(string url)
+        {
+            var productDriver = new ChromeDriver(ChromeDriverPath);
+            productDriver.Navigate().GoToUrl(url);
+            
+            // Look for the unordered lists (p-goods-add-cart-list). Each <ul> belongs to a color variant of the product.
+            var ulObjects = productDriver.FindElementsByClassName("p-goods-add-cart-list");
+            // This is a collection of the different color variants of the item. These objects are clicked to show the actual image.
+            var itemColors = productDriver.FindElements(By.ClassName("p-goods-thumbnail-list__item"));
+            var colorIndexCounter = 0;
+            
+            foreach (var ulObject in ulObjects)
+            {
+                var availableSizes = new List<string>();
+                var liObjects = ulObject.FindElements(By.XPath("./li[@class='p-goods-add-cart-list__item']"));
+                foreach (var liObject in liObjects)
+                {
+                    var formObject = liObject.FindElements(By.XPath(
+                        "./div[@class='cartbox p-goods-add-cart']/div[@class='cart p-goods-add-cart__action']/form"));
+                    if (formObject.Count > 0)
+                    {
+                        availableSizes.Add(liObject.GetAttribute("data-size"));
+                    }
+                }
+
+                if (availableSizes.Count > 0)
+                {
+                    Console.WriteLine("ul: " + ulObjects.Count);
+                    itemColors[colorIndexCounter].Click();
+                    Thread.Sleep(800);
+
+                    var imageObject = productDriver.FindElementByXPath("//div[@id=\"photoMain\"]/img");
+                    var imageSource = imageObject.GetAttribute("src");
+
+                    var itemName = productDriver.FindElementByClassName("p-goods-information__heading")
+                        .GetAttribute("innerHTML");
+
+                    // itemName may contain illegal characters. Replace all illegal characters with _
+                    itemName = Path.GetInvalidPathChars()
+                        .Aggregate(itemName, (current, character) => current.Replace(character, '_'));
+
+                    // Also replace all forward slashes. This causes a fetal error and is not filtered by the filter above.
+                    itemName = itemName.Replace("/", "-");
+
+                    foreach (var size in availableSizes)
+                    {
+                        itemName += size + "-";
+                    }
+
+                    WebClient.DownloadFile(imageSource,
+                        DownloadsPath + @"\" + itemName + _globalDownloadCounter + ".jpg");
+                    _globalDownloadCounter++;
+                }
+
+                colorIndexCounter++;
+            }
+            
+            productDriver.Quit();
         }
     }
 }
