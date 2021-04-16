@@ -31,12 +31,17 @@ namespace imageScraper
             Console.WriteLine("Please insert the url, and then press Enter");
             _urlInput = Console.ReadLine();
 
-            if (_urlInput == "exit")
+            switch (_urlInput)
             {
-                return;
+                case "exit":
+                    return;
+                case "help":
+                    PrintHelp();
+                    break;
+                default:
+                    ImageScraper.DownloadAllImages(_urlInput);
+                    break;
             }
-
-            ImageScraper.DownloadAllImages(_urlInput);
         }
 
         /*
@@ -67,10 +72,8 @@ namespace imageScraper
         {
             Console.WriteLine(@"
     The following things can be typed into the console:
-    1. An URL to the item page. Example: https://example.jp/shop/xxxxx/goods/32485477/?did=56xxx270&rid=1019
-    2. An integer, this is the index of the catalog. Example: 8
-    3. Nothing. The whole first catalog will be scraped if the user presses Enter without providing data.
-    4. Type 'exit' to close the console.
+    1. An URL to the catalog page. e.g. 'https://zozo.jp/shop/bapeland/shoes/'
+    2. Type 'exit' to close the console.
 
     Go to 'https://github.com/anthony0tran/faabBot' for more information.
             ");

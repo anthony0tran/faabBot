@@ -52,8 +52,6 @@ namespace imageScraper
                     {
                         _productList.Add(product);
                     }
-
-                    Console.WriteLine("productList count: " + _productList.ToList().Count);
                 }
             }
         }
@@ -61,6 +59,10 @@ namespace imageScraper
         public static void DownloadAllImages(string url)
         {
             GetAllProducts(url);
+            
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Found " + _productList.Count + " products on " + url);
+            Console.ResetColor();
             
             foreach (var productUrl in _productList)
             {
@@ -114,9 +116,7 @@ namespace imageScraper
                     }
                 }
             }
-
-            Console.WriteLine("Found " + itemsUrl.Count + " products on " + url);
-
+            
             catalogDriver.Quit();
 
             return itemsUrl;
