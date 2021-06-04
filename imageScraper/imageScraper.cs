@@ -44,9 +44,10 @@ namespace imageScraper
             if (_highestPageIndex > 0)
             {
                 var baseUrl = GetCatalogBaseUrl(_catalogUrls);
+                var filterParams = GetFilterFromUrl(_catalogUrls);
                 for (var i = 2; i <= _highestPageIndex; i++)
-                {
-                    var tempProductList = GetAllProductsOnPage(baseUrl + i);
+                { 
+                    var tempProductList = GetAllProductsOnPage(baseUrl + SetCatalogIndex(i, filterParams));
 
                     foreach (var product in tempProductList)
                     {
@@ -135,26 +136,54 @@ namespace imageScraper
             {
                 catalogUrls.Add(catalogUrl.GetAttribute("href"));
             }
-
+            
             return catalogUrls;
         }
 
         private static int GetHighestCatalogIndex(IEnumerable<string> catalogUrls)
         {
-            const string urlPattern = "?pno=";
+            const string urlPattern = "pno=";
 
             var highestIndexUrl = catalogUrls.ToList()[^1];
-
             var index = highestIndexUrl.IndexOf(urlPattern, StringComparison.Ordinal);
             var highestIndexString = highestIndexUrl[(index + urlPattern.Length)..];
-
-            int.TryParse(highestIndexString, out var highestIndex);
+            int.TryParse(GetCatalogIndexFromString(highestIndexString), out var highestIndex);
             return highestIndex;
         }
 
+        private static string GetFilterFromUrl(IEnumerable<string> catalogUrls)
+        {
+            const string urlPattern = "?";
+            var enumerable = catalogUrls.ToList();
+            var index = enumerable[0].IndexOf(urlPattern, StringComparison.Ordinal);
+            var filterParams = enumerable[0][(index + urlPattern.Length)..];
+
+            return filterParams;
+        }
+
+        // The URL string after the '?' contains the catalog number but also the applied filters.
+        // This function will filter out the catalog number and return it as a string.
+        private static string GetCatalogIndexFromString(string urlParams)
+        {
+            var cleanIndex = "";
+            foreach (var c in urlParams)
+            {
+                if (char.IsDigit(c))
+                {
+                    cleanIndex += c;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return cleanIndex;
+        } 
+
         private static string GetCatalogBaseUrl(IEnumerable<string> catalogUrls)
         {
-            const string urlPattern = "?pno=";
+            const string urlPattern = "?";
             var enumerable = catalogUrls.ToList();
             var index = enumerable[0].IndexOf(urlPattern, StringComparison.Ordinal);
             var baseUrl = enumerable[0][..(index + urlPattern.Length)];
@@ -192,6 +221,31 @@ namespace imageScraper
             int.TryParse(resultString, out id);
 
             return id;
+        }
+
+        // This function is used to increment the catalog page index. The params of the url will be mutated and outputted.
+        private static string SetCatalogIndex(int index, string urlParams)
+        {
+            const string urlPattern = "pno=";
+            var indexString = urlParams.IndexOf(urlPattern, StringComparison.Ordinal);
+            var urlParamsPostFix = urlParams[(indexString + urlPattern.Length)..];
+            var urlParamsPreFix = urlParams[..(indexString + urlPattern.Length)]; 
+            
+            foreach (char c in urlParamsPostFix)
+            {
+                if (char.IsDigit(c))
+                {
+                    urlParamsPostFix = urlParamsPostFix.Remove(0, 1);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            urlParamsPostFix = index + urlParamsPostFix;
+            
+            return urlParamsPreFix + urlParamsPostFix;
         }
 
         private static void DownloadImages(string url, ChromeDriver driver = null)

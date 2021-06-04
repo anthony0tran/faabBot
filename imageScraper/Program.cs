@@ -5,7 +5,7 @@ namespace imageScraper
     internal static class Program
     {
         private static string _urlInput = "";
-        private const double Version = 0.4;
+        private const double Version = 0.5;
 
         private static void Main(string[] args)
         {
@@ -30,6 +30,14 @@ namespace imageScraper
         {
             Console.WriteLine("Please insert the url, and then press Enter");
             _urlInput = Console.ReadLine();
+
+            if (!IsUrlValid(_urlInput))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid URL!");
+                Console.ResetColor();
+                return;
+            }
 
             switch (_urlInput)
             {
