@@ -108,9 +108,6 @@ namespace imageScraper
 
     Go to 'https://github.com/anthony0tran/faabBot' for more information.
             ");
-            ImageScraper.PrintClothingSizes();
-            Console.WriteLine("\nPlease insert an url or command, and then press Enter");
-            _urlInput = Console.ReadLine();
         }
     }
 }
