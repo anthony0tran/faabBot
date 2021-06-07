@@ -331,7 +331,6 @@ namespace imageScraper
                     }
                 }
 
-                // TODO: also check if the specified clothing size is in the list.
                 if (availableSizes.Count > 0 && AvailableSizeCheck(availableSizes))
                 {
                     itemColors[colorIndexCounter].Click();
