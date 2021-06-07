@@ -5,7 +5,7 @@ namespace imageScraper
     internal static class Program
     {
         private static string _urlInput = "";
-        private const double Version = 0.5;
+        private const double Version = 0.6;
 
         private static void Main(string[] args)
         {
@@ -28,7 +28,8 @@ namespace imageScraper
          */
         private static void InitScraping()
         {
-            Console.WriteLine("Please insert the url, and then press Enter");
+            ImageScraper.PrintClothingSizes();
+            Console.WriteLine("\nPlease insert an url or command, and then press Enter");
             _urlInput = Console.ReadLine();
 
             switch (_urlInput)
@@ -37,6 +38,21 @@ namespace imageScraper
                     return;
                 case "help":
                     PrintHelp();
+                    break;
+                case "add-size":
+                    Console.WriteLine("Please insert a clothing size, and then press Enter");
+                    var addSizeInput = Console.ReadLine();
+                    ImageScraper.AddClothingSize(addSizeInput);
+                    break;
+                case "remove-size":
+                    Console.WriteLine("Please insert a clothing size, and then press Enter");
+                    var removeSizeInput = Console.ReadLine();
+                    ImageScraper.RemoveClothingSize(removeSizeInput);
+                    break;
+                case "show-size":
+                    break;
+                case "reset-size":
+                    ImageScraper.ResetClothingSize();
                     break;
                 default:
                     if (!IsUrlValid(_urlInput))
@@ -84,10 +100,16 @@ namespace imageScraper
     The following things can be typed into the console:
     1. An URL to the catalog page. e.g. 'https://zozo.jp/shop/bapeland/shoes/'
     2. Type 'exit' to close the console.
+    3. Set one or multiple sizes to scrape, use the following commands:
+       - 'add-size'
+       - 'remove-size'
+       - 'reset-size'
+       - 'show-size'
 
     Go to 'https://github.com/anthony0tran/faabBot' for more information.
             ");
-            Console.WriteLine("\nPlease insert the URL, and then press Enter");
+            ImageScraper.PrintClothingSizes();
+            Console.WriteLine("\nPlease insert an url or command, and then press Enter");
             _urlInput = Console.ReadLine();
         }
     }
