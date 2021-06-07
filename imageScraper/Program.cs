@@ -28,7 +28,8 @@ namespace imageScraper
          */
         private static void InitScraping()
         {
-            Console.WriteLine("Please insert the url, and then press Enter");
+            ImageScraper.PrintClothingSizes();
+            Console.WriteLine("\nPlease insert the url, and then press Enter");
             _urlInput = Console.ReadLine();
 
             switch (_urlInput)
@@ -37,6 +38,20 @@ namespace imageScraper
                     return;
                 case "help":
                     PrintHelp();
+                    break;
+                case "add-size":
+                    Console.WriteLine("Please insert a clothing size, and then press Enter");
+                    var sizeInput = Console.ReadLine();
+                    ImageScraper.AddClothingSize(sizeInput);
+                    break;
+                case "remove-size":
+                    Console.WriteLine("Please insert a clothing size, and then press Enter");
+                    break;
+                case "show-size":
+                    
+                    break;
+                case "reset-size":
+                    ImageScraper.ResetClothingSize();
                     break;
                 default:
                     if (!IsUrlValid(_urlInput))
@@ -87,6 +102,7 @@ namespace imageScraper
 
     Go to 'https://github.com/anthony0tran/faabBot' for more information.
             ");
+            ImageScraper.PrintClothingSizes();
             Console.WriteLine("\nPlease insert the URL, and then press Enter");
             _urlInput = Console.ReadLine();
         }

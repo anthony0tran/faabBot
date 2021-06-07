@@ -27,6 +27,8 @@ namespace imageScraper
 
         private static List<string> _productList;
 
+        private static List<string> _clothingSize = new List<string>();
+
         private static void GetAllProducts(string url)
         {
             _productList = new List<string>();
@@ -46,7 +48,7 @@ namespace imageScraper
                 var baseUrl = GetCatalogBaseUrl(_catalogUrls);
                 var filterParams = GetFilterFromUrl(_catalogUrls);
                 for (var i = 2; i <= _highestPageIndex; i++)
-                { 
+                {
                     var tempProductList = GetAllProductsOnPage(baseUrl + SetCatalogIndex(i, filterParams));
 
                     foreach (var product in tempProductList)
@@ -60,11 +62,11 @@ namespace imageScraper
         public static void DownloadAllImages(string url)
         {
             GetAllProducts(url);
-            
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Found " + _productList.Count + " products on " + url);
             Console.ResetColor();
-            
+
             foreach (var productUrl in _productList)
             {
                 DownloadImages(productUrl);
@@ -117,7 +119,7 @@ namespace imageScraper
                     }
                 }
             }
-            
+
             catalogDriver.Quit();
 
             return itemsUrl;
@@ -136,8 +138,45 @@ namespace imageScraper
             {
                 catalogUrls.Add(catalogUrl.GetAttribute("href"));
             }
-            
+
             return catalogUrls;
+        }
+
+        public static void AddClothingSize(string size)
+        {
+            _clothingSize.Add(size);
+        }
+
+        private static List<string> GetClothingSize()
+        {
+            return _clothingSize;
+        }
+
+        public static void PrintClothingSizes()
+        {
+            var outputString = "Scraping the following sizes:";
+
+            if (_clothingSize.Count > 0)
+            {
+                
+                foreach (var size in _clothingSize)
+                {
+                    outputString += " " + size;
+                }
+            }
+            else
+            {
+                outputString += " All available sizes.";
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(outputString);
+            Console.ResetColor();
+        }
+
+        public static void ResetClothingSize()
+        {
+            _clothingSize.Clear();
         }
 
         private static int GetHighestCatalogIndex(IEnumerable<string> catalogUrls)
@@ -179,7 +218,7 @@ namespace imageScraper
             }
 
             return cleanIndex;
-        } 
+        }
 
         private static string GetCatalogBaseUrl(IEnumerable<string> catalogUrls)
         {
@@ -229,8 +268,8 @@ namespace imageScraper
             const string urlPattern = "pno=";
             var indexString = urlParams.IndexOf(urlPattern, StringComparison.Ordinal);
             var urlParamsPostFix = urlParams[(indexString + urlPattern.Length)..];
-            var urlParamsPreFix = urlParams[..(indexString + urlPattern.Length)]; 
-            
+            var urlParamsPreFix = urlParams[..(indexString + urlPattern.Length)];
+
             foreach (char c in urlParamsPostFix)
             {
                 if (char.IsDigit(c))
@@ -244,7 +283,7 @@ namespace imageScraper
             }
 
             urlParamsPostFix = index + urlParamsPostFix;
-            
+
             return urlParamsPreFix + urlParamsPostFix;
         }
 
@@ -274,6 +313,7 @@ namespace imageScraper
                     }
                 }
 
+                // TODO: also check if the specified clothing size is in the list.
                 if (availableSizes.Count > 0)
                 {
                     itemColors[colorIndexCounter].Click();
