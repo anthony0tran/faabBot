@@ -6,13 +6,13 @@ Insert the following values into the console when asked for an URL:
   ```
   https://www.example.com/goods/xxxxxxx
   ```
-- An integer. This will scrape the whole catalog page.
-  ```
-  5
-  ```
-- Nothing. The first catalog page will be scraped.
 
-## 2. How to close the program.
+## 2. See help
+  ```
+  help
+  ```
+  
+## 3. How to close the program.
 Insert the following command into the console when asked for an URL:
   ```
   exit
