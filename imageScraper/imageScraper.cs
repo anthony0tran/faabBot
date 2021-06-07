@@ -147,9 +147,22 @@ namespace imageScraper
             _clothingSize.Add(size);
         }
 
-        private static List<string> GetClothingSize()
+        public static void RemoveClothingSize(string size)
         {
-            return _clothingSize;
+            // check if size is in the list
+            if (!_clothingSize.Contains(size))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Size not found...");
+                Console.ResetColor();
+            }
+            else
+            {
+                _clothingSize.Remove(size);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(size + " successfully removed.");
+                Console.ResetColor();
+            }
         }
 
         public static void PrintClothingSizes()
@@ -158,7 +171,6 @@ namespace imageScraper
 
             if (_clothingSize.Count > 0)
             {
-                
                 foreach (var size in _clothingSize)
                 {
                     outputString += " " + size;
@@ -287,7 +299,13 @@ namespace imageScraper
             return urlParamsPreFix + urlParamsPostFix;
         }
 
-        private static void DownloadImages(string url, ChromeDriver driver = null)
+        // Checks if the list of availableSizes contains the sizes provided by the user.
+        private static bool AvailableSizeCheck(List<string> availableSizes)
+        {
+            return _clothingSize.Count <= 0 || _clothingSize.Any(size => availableSizes.Contains(size));
+        }
+
+        private static void DownloadImages(string url)
         {
             var productDriver = new ChromeDriver(ChromeDriverPath);
             productDriver.Navigate().GoToUrl(url);
@@ -314,7 +332,7 @@ namespace imageScraper
                 }
 
                 // TODO: also check if the specified clothing size is in the list.
-                if (availableSizes.Count > 0)
+                if (availableSizes.Count > 0 && AvailableSizeCheck(availableSizes))
                 {
                     itemColors[colorIndexCounter].Click();
                     Thread.Sleep(800);
