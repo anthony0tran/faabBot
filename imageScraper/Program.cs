@@ -5,7 +5,7 @@ namespace imageScraper
     internal static class Program
     {
         private static string _urlInput = "";
-        private const double Version = 0.5;
+        private const double Version = 0.6;
 
         private static void Main(string[] args)
         {
@@ -100,6 +100,11 @@ namespace imageScraper
     The following things can be typed into the console:
     1. An URL to the catalog page. e.g. 'https://zozo.jp/shop/bapeland/shoes/'
     2. Type 'exit' to close the console.
+    3. Set one or multiple sizes to scrape, use the following commands:
+       - 'add-size'
+       - 'remove-size'
+       - 'reset-size'
+       - 'show-size'
 
     Go to 'https://github.com/anthony0tran/faabBot' for more information.
             ");
