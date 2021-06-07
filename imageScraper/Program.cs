@@ -31,14 +31,6 @@ namespace imageScraper
             Console.WriteLine("Please insert the url, and then press Enter");
             _urlInput = Console.ReadLine();
 
-            if (!IsUrlValid(_urlInput))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid URL!");
-                Console.ResetColor();
-                return;
-            }
-
             switch (_urlInput)
             {
                 case "exit":
@@ -47,7 +39,17 @@ namespace imageScraper
                     PrintHelp();
                     break;
                 default:
-                    ImageScraper.DownloadAllImages(_urlInput);
+                    if (!IsUrlValid(_urlInput))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid URL!");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        ImageScraper.DownloadAllImages(_urlInput);
+                    }
+
                     break;
             }
         }
