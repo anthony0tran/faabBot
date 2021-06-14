@@ -57,6 +57,7 @@ namespace imageScraper
                     }
                 }
             }
+            
         }
 
         public static void DownloadAllImages(string url)
@@ -108,12 +109,18 @@ namespace imageScraper
             {
                 if (itemsUrl.Count == 0)
                 {
-                    itemsUrl.Add(productHtmlObject.GetAttribute("href"));
+                    if (productHtmlObject.GetAttribute("href").Contains("goods/") ||
+                        productHtmlObject.GetAttribute("href").Contains("goods-sale/"))
+                    {
+                        itemsUrl.Add(productHtmlObject.GetAttribute("href"));
+                    }
                 }
                 else
                 {
-                    var lastProductId = GetIdFromUrl(itemsUrl[^1]);
-                    if (!productHtmlObject.GetAttribute("href").Contains(lastProductId.ToString()))
+                    int lastProductId = GetIdFromUrl(itemsUrl[^1]);
+                    if (!productHtmlObject.GetAttribute("href").Contains(lastProductId.ToString()) &&
+                        (productHtmlObject.GetAttribute("href").Contains("goods/") ||
+                         productHtmlObject.GetAttribute("href").Contains("goods-sale/")))
                     {
                         itemsUrl.Add(productHtmlObject.GetAttribute("href"));
                     }
@@ -121,7 +128,7 @@ namespace imageScraper
             }
 
             catalogDriver.Quit();
-
+            
             return itemsUrl;
         }
 
@@ -250,26 +257,53 @@ namespace imageScraper
         {
             var id = 0;
             const string urlPattern = "goods/";
+            const string urlSalePattern = "goods-sale/";
 
-            if (!url.Contains(urlPattern)) return id;
-
-            var index = url.IndexOf(urlPattern, StringComparison.Ordinal);
-            var subString = url[(index + urlPattern.Length)..];
-            var resultString = "";
-
-            foreach (var c in subString)
+            if (url.Contains(urlPattern))
             {
-                if (c != '/')
+                var index = url.IndexOf(urlPattern, StringComparison.Ordinal);
+                var subString = url[(index + urlPattern.Length)..];
+                var resultString = "";
+
+                foreach (var c in subString)
                 {
-                    resultString += c;
+                    if (c != '/')
+                    {
+                        resultString += c;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
-                {
-                    break;
-                }
+
+                int.TryParse(resultString, out id);
+
+                return id;
             }
 
-            int.TryParse(resultString, out id);
+            if (url.Contains(urlSalePattern))
+            {
+                var index = url.IndexOf(urlSalePattern, StringComparison.Ordinal);
+                var subString = url[(index + urlSalePattern.Length)..];
+                var resultString = "";
+
+                foreach (var c in subString)
+                {
+                    if (c != '/')
+                    {
+                        resultString += c;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                int.TryParse(resultString, out id);
+
+                return id;
+            }
 
             return id;
         }
