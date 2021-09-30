@@ -5,7 +5,7 @@ namespace imageScraper
     internal static class Program
     {
         private static string _urlInput = "";
-        private const double Version = 0.7;
+        private const string Version = "0.7.2";
 
         private static void Main(string[] args)
         {
