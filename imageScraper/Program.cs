@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace imageScraper
+﻿namespace imageScraper.v2
 {
     internal static class Program
     {
         private static string _urlInput = "";
-        private const string Version = "0.7.2";
+        private const string Version = "0.8";
 
         private static void Main(string[] args)
         {

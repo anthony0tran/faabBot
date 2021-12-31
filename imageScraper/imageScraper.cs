@@ -7,7 +7,7 @@ using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
-namespace imageScraper
+namespace imageScraper.v2
 {
     public static class ImageScraper
     {
@@ -139,7 +139,7 @@ namespace imageScraper
         {
             var catalogUrls = new List<string>();
 
-            var catalogPages = catalogDriver.FindElementsByXPath("//li[@class=\"c-pager-page-number-list-item\"]/a");
+            var catalogPages = catalogDriver.FindElements(By.XPath("//li[@class=\"c-pager-page-number-list-item\"]/a"));
 
             foreach (var catalogUrl in catalogPages)
             {
@@ -346,7 +346,7 @@ namespace imageScraper
             Thread.Sleep(1000);
 
             // Look for the unordered lists (p-goods-add-cart-list). Each <ul> belongs to a color variant of the product.
-            var ulObjects = productDriver.FindElementsByClassName("p-goods-add-cart-list");
+            var ulObjects = productDriver.FindElements(By.ClassName("p-goods-add-cart-list"));
             // This is a collection of the different color variants of the item. These objects are clicked to show the actual image.
             var itemColors = productDriver.FindElements(By.ClassName("p-goods-thumbnail-list__item"));
             var colorIndexCounter = 0;
@@ -370,10 +370,10 @@ namespace imageScraper
                     itemColors[colorIndexCounter].Click();
                     Thread.Sleep(800);
 
-                    var imageObject = productDriver.FindElementByXPath("//div[@id=\"photoMain\"]/img");
+                    var imageObject = productDriver.FindElement(By.XPath("//div[@id=\"photoMain\"]/img"));
                     var imageSource = imageObject.GetAttribute("src");
 
-                    var itemName = productDriver.FindElementByClassName("p-goods-information__heading")
+                    var itemName = productDriver.FindElement(By.ClassName("p-goods-information__heading"))
                         .GetAttribute("innerHTML");
 
                     // itemName may contain illegal characters. Replace all illegal characters with _

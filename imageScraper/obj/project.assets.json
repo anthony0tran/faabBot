@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net5.0": {
+    "net6.0": {
       "Newtonsoft.Json/12.0.3": {
         "type": "package",
         "compile": {
@@ -11,13 +11,19 @@
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
-      "Selenium.Chrome.WebDriver/85.0.0": {
+      "Selenium.Support/4.1.0": {
         "type": "package",
-        "build": {
-          "build/Selenium.Chrome.WebDriver.targets": {}
+        "dependencies": {
+          "Selenium.WebDriver": "4.1.0"
+        },
+        "compile": {
+          "lib/net5.0/WebDriver.Support.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/WebDriver.Support.dll": {}
         }
       },
-      "Selenium.WebDriver/4.0.0-beta2": {
+      "Selenium.WebDriver/4.1.0": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "12.0.3"
@@ -63,23 +69,29 @@
         "packageIcon.png"
       ]
     },
-    "Selenium.Chrome.WebDriver/85.0.0": {
-      "sha512": "wRg7it2bBMyYtOsarTy0bWtS2fCZI08KGTef2kH381DYpGP+wX8j6f/7ABv1nmrUj5CCVmTeDeYeXS5g00JXSw==",
+    "Selenium.Support/4.1.0": {
+      "sha512": "wuK5cfgVaimOZqyuriY2geGpNsI9DWky8CuBlrkBnmebkSrRftxqwyUVy0NLooHaAB2iaMj7qM+VOdUEX5bCHQ==",
       "type": "package",
-      "path": "selenium.chrome.webdriver/85.0.0",
+      "path": "selenium.support/4.1.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "build/Selenium.Chrome.WebDriver.targets",
-        "driver/chromedriver.exe",
-        "selenium.chrome.webdriver.85.0.0.nupkg.sha512",
-        "selenium.chrome.webdriver.nuspec"
+        "images/icon.png",
+        "lib/net45/WebDriver.Support.dll",
+        "lib/net46/WebDriver.Support.dll",
+        "lib/net47/WebDriver.Support.dll",
+        "lib/net48/WebDriver.Support.dll",
+        "lib/net5.0/WebDriver.Support.dll",
+        "lib/netstandard2.0/WebDriver.Support.dll",
+        "lib/netstandard2.1/WebDriver.Support.dll",
+        "selenium.support.4.1.0.nupkg.sha512",
+        "selenium.support.nuspec"
       ]
     },
-    "Selenium.WebDriver/4.0.0-beta2": {
-      "sha512": "D6R8WrTggalRviNue130FL3XA7GhBw0xckC8Y9jxLlhc5mqccX3JtUnPVqGpGrl3yq7vynXSLqEMjNEWEX9wxw==",
+    "Selenium.WebDriver/4.1.0": {
+      "sha512": "d4smisz4a/wJCM2TzkKTl+BLfvZUTvaobhKElDfCVZlvY8ThsC8VAoBNWTlg1H/GGzIP//yVGko/W0FILTgkYA==",
       "type": "package",
-      "path": "selenium.webdriver/4.0.0-beta2",
+      "path": "selenium.webdriver/4.1.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -91,15 +103,15 @@
         "lib/net5.0/WebDriver.dll",
         "lib/netstandard2.0/WebDriver.dll",
         "lib/netstandard2.1/WebDriver.dll",
-        "selenium.webdriver.4.0.0-beta2.nupkg.sha512",
+        "selenium.webdriver.4.1.0.nupkg.sha512",
         "selenium.webdriver.nuspec"
       ]
     }
   },
   "projectFileDependencyGroups": {
-    "net5.0": [
-      "Selenium.Chrome.WebDriver >= 85.0.0",
-      "Selenium.WebDriver >= 4.0.0-beta2"
+    "net6.0": [
+      "Selenium.Support >= 4.1.0",
+      "Selenium.WebDriver >= 4.1.0"
     ]
   },
   "packageFolders": {
@@ -108,24 +120,26 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\imageScraper.csproj",
-      "projectName": "imageScraper",
-      "projectPath": "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\imageScraper.csproj",
+      "projectUniqueName": "D:\\CSprojects\\ImageScraper.v2\\ImageScraper.v2.csproj",
+      "projectName": "ImageScraper.v2",
+      "projectPath": "D:\\CSprojects\\ImageScraper.v2\\ImageScraper.v2.csproj",
       "packagesPath": "C:\\Users\\antho\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\antho\\Desktop\\faabBot\\imageScraper\\obj\\",
+      "outputPath": "D:\\CSprojects\\ImageScraper.v2\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\antho\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\antho\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net5.0"
+        "net6.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net6.0": {
+          "targetAlias": "net6.0",
           "projectReferences": {}
         }
       },
@@ -136,16 +150,16 @@
       }
     },
     "frameworks": {
-      "net5.0": {
-        "targetAlias": "net5.0",
+      "net6.0": {
+        "targetAlias": "net6.0",
         "dependencies": {
-          "Selenium.Chrome.WebDriver": {
+          "Selenium.Support": {
             "target": "Package",
-            "version": "[85.0.0, )"
+            "version": "[4.1.0, )"
           },
           "Selenium.WebDriver": {
             "target": "Package",
-            "version": "[4.0.0-beta2, )"
+            "version": "[4.1.0, )"
           }
         },
         "imports": [
@@ -163,7 +177,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }
