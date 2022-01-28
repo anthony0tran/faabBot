@@ -1,0 +1,17 @@
+﻿<Window x:Class="faabBot.GUI.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:faabBot.GUI.Views"
+        mc:Ignorable="d"
+        Title="About" Height="250" Width="350"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label x:Name="aboutLogoLabel" Content="FaabBot" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,27,0,0" FontFamily="Microsoft Sans Serif" FontWeight="Bold" FontSize="48" Background="#FF01B5C3" Foreground="White"/>
+        <Label x:Name="aboutVersionLabel" Content="Version" HorizontalAlignment="Left" Margin="51,95,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif"/>
+        <Label x:Name="aboutAnthonyLabel" Content="Developed by: Anthony Tran" HorizontalAlignment="Left" Margin="51,125,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif"/>
+        <Label x:Name="aboutGithubLabel" Content="For more help, go to&#xA;https://github.com/anthony0tran/faabBot" HorizontalAlignment="Left" Margin="51,154,0,0" VerticalAlignment="Top" Height="43"/>
+    </Grid>
+</Window>

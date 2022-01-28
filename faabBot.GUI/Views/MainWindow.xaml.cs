@@ -1,4 +1,5 @@
-﻿using System;
+﻿using faabBot.GUI.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,13 @@ namespace faabBot.GUI
         {
             InitializeComponent();
 
-            Title += String.Format(" v{0}", Globals.Version);
+            Title += String.Format(" v{0:f1}", Globals.Version);
+        }
+
+        private void AboutBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AboutWindow aboutWindow = new();
+            aboutWindow.Show();
         }
     }
 }
