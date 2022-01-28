@@ -19,23 +19,24 @@
             <RowDefinition Height="0.2*" />
         </Grid.RowDefinitions>
 
-        <Button x:Name="aboutBtn" Grid.Column="1" Content="About" HorizontalAlignment="Left" Width="50" Height="20" Margin="222,10,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" Click="AboutBtn_Click"/>
+        <Button x:Name="aboutBtn" Grid.Column="1" Content="ABOUT" HorizontalAlignment="Left" Width="50" Height="20" Margin="222,10,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" Click="AboutBtn_Click" FontWeight="Bold"/>
 
-        <Label x:Name="imagesListLbl" Content="Found images" HorizontalAlignment="Left" Margin="20,17,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif"/>
-        <ListBox x:Name="imagesListBox" Margin="20,42,5,73" Grid.Column="0" Grid.RowSpan="2" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="Microsoft Sans Serif"/>
+        <Label x:Name="productsListLbl" Content="Found products" HorizontalAlignment="Left" Margin="20,17,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif"/>
+        <ListBox x:Name="productsListBox" Margin="20,42,5,73" Grid.Column="0" Grid.RowSpan="2" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="Microsoft Sans Serif"/>
 
         <Label x:Name="logTextBoxLbl" Content="Console logs" HorizontalAlignment="Left" Margin="5,17,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Microsoft Sans Serif"/>
-        <TextBox x:Name="logTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,43,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="269" Height="136" FontFamily="Microsoft Sans Serif" IsReadOnly="True"/>
+        <TextBox x:Name="logTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,43,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="269" Height="132" FontFamily="Microsoft Sans Serif" IsReadOnly="True"/>
 
-        <Label x:Name="urlLbl" Grid.Column="1" Content="URL" HorizontalAlignment="Left" Margin="5,180,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" Grid.RowSpan="2"/>
-        <TextBox x:Name="urlTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,20,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Height="20" Width="236" FontFamily="Microsoft Sans Serif"/>
-        <Button x:Name="urlOKBtn" Grid.Column="1" Content="OK" HorizontalAlignment="Left" Margin="242,20,0,0" Grid.Row="1" Height="20" VerticalAlignment="Top" Width="30" RenderTransformOrigin="-0.378,0.433" Background="#FF37EF5C" FontFamily="Microsoft Sans Serif"/>
+        <Label x:Name="urlLbl" Grid.Column="1" Content="URL" HorizontalAlignment="Left" Margin="5,174,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" Grid.RowSpan="2"/>
+        <TextBox x:Name="urlTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,8,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Height="35" Width="185" FontFamily="Microsoft Sans Serif"/>
+        <Button x:Name="urlOKBtn" Grid.Column="1" Content="OK" HorizontalAlignment="Left" Margin="242,8,0,0" Grid.Row="1" Height="35" VerticalAlignment="Top" Width="30" RenderTransformOrigin="-0.378,0.433" Background="#FF70FF8C" FontFamily="Microsoft Sans Serif" Click="UrlOKBtn_Click"/>
+        <Button x:Name="urlClearBtn" Grid.Column="1" Content="CLEAR" HorizontalAlignment="Left" Margin="190,8,0,0" Grid.Row="1" Height="35" VerticalAlignment="Top" Width="51" RenderTransformOrigin="-0.378,0.433" Background="#FFFB6E6E" FontFamily="Microsoft Sans Serif" Click="UrlClearBtn_Click"/>
 
         <Label x:Name="sizesListLabel" Grid.Column="1" Content="Clothing sizes" HorizontalAlignment="Left" Margin="5,44,0,0" Grid.Row="1" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif"/>
         <ListBox x:Name="sizesListBox" Grid.Column="1" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="5,70,20,22" FontFamily="Microsoft Sans Serif"/>
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" FlowDirection="LeftToRight"  Orientation="Horizontal" Grid.Column="1" Grid.Row="1" Height="30" Width="275" Margin="5,171,0,0" Grid.RowSpan="2">
-            <Button x:Name="deleteSizeBtn" Content="DELETE SIZE" Margin="0,0,2,0" Background="#FFFF4C4C" Height="25" Width="132" FontFamily="Microsoft Sans Serif"/>
-            <Button x:Name="addSizeBtn" Content="ADD SIZE" Margin="2,0,0,0" Background="#FF37EF5C" Height="25" Width="132" FontFamily="Microsoft Sans Serif"/>
+            <Button x:Name="deleteSizeBtn" Content="DELETE SIZE" Margin="0,0,2,0" Background="#FFFB6E6E" Height="25" Width="132" FontFamily="Microsoft Sans Serif" Click="DeleteSizeBtn_Click"/>
+            <Button x:Name="addSizeBtn" Content="ADD SIZE" Margin="2,0,0,0" Background="#FF70FF8C" Height="25" Width="132" FontFamily="Microsoft Sans Serif" Click="AddSizeBtn_Click"/>
         </StackPanel>
 
         <Label x:Name="urlStatsLbl" Content="URL:" HorizontalAlignment="Left" Margin="20,125,0,0" Grid.Row="1" VerticalAlignment="Top"/>
@@ -43,6 +44,6 @@
         <Label x:Name="statusLabel" Content="Status:" HorizontalAlignment="Left" Margin="20,177,0,0" Grid.Row="1" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
         <ProgressBar Margin="20,0,0,0" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Width="440" Height="40" Grid.ColumnSpan="2" />
-        <Button x:Name="startBtn" Content="START" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,20,0" Width="100" Height="40" Background="#FF37EF5C" FontFamily="Microsoft Sans Serif" FontWeight="Bold"/>
+        <Button x:Name="startBtn" Content="START" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,20,0" Width="100" Height="40" Background="#FF70FF8C" FontFamily="Microsoft Sans Serif" FontWeight="Bold"/>
     </Grid>
 </Window>

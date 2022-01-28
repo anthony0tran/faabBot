@@ -1,4 +1,7 @@
-﻿using faabBot.GUI.Views;
+﻿using faabBot.GUI.Controllers;
+using faabBot.GUI.Helpers;
+using faabBot.GUI.Validators;
+using faabBot.GUI.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +24,62 @@ namespace faabBot.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private SizesController SizesInstance { get; set; }
         public MainWindow()
         {
             InitializeComponent();
 
             Title += String.Format(" v{0:f1}", Globals.Version);
+
+            SizesInstance = new();
+
+            sizesListBox.ItemsSource = SizesInstance.Sizes;
         }
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
         {
             AboutWindow aboutWindow = new();
             aboutWindow.Show();
+        }
+
+        private void UrlOKBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string urlText = urlTextBox.Text;
+            if (MainValidator.UrlValidator(this))
+            {
+                urlTextBox.Clear();
+                if (urlText.Length > Globals.MaxUrlDisplayLength)
+                {
+                    urlStatsLbl.Content = String.Format("URL: {0}...", urlText[..Globals.MaxUrlDisplayLength]);
+                }
+                else
+                {
+                    urlStatsLbl.Content = String.Format("URL: {0}", urlText);
+                }
+
+                urlStatsLbl.ToolTip = urlText;
+            }
+        }
+
+        private void UrlClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            urlStatsLbl.Content = "URL:";
+            urlTextBox.Text = "";
+            InputFieldHelper.ClearBorders(urlTextBox);
+        }
+
+        private void AddSizeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AddSizeWindow addSizeWindow = new(SizesInstance);
+            addSizeWindow.ShowDialog();
+        }
+
+        private void DeleteSizeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (sizesListBox.SelectedItem != null)
+            {
+                SizesInstance.Sizes.Remove(sizesListBox.SelectedItem.ToString()!);
+            }
         }
     }
 }
