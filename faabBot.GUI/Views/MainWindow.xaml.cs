@@ -23,6 +23,8 @@ namespace faabBot.GUI
         public MainWindow()
         {
             InitializeComponent();
+
+            Title += String.Format(" v{0}", Globals.Version);
         }
     }
 }
