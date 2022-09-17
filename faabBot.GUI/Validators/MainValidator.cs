@@ -11,18 +11,18 @@ namespace faabBot.GUI.Validators
 {
     internal static class MainValidator
     {
-        #region validators
-        public static bool UrlValidator(MainWindow mainWindow)
+        #region URL validators
+        public static bool UrlValidator(TextBox textBox)
         {
-            if (String.IsNullOrWhiteSpace(mainWindow.urlTextBox.Text) || !IsUrlValid(mainWindow.urlTextBox.Text))
+            if (string.IsNullOrWhiteSpace(textBox.Text) || !IsUrlValid(textBox.Text))
             {
-                InputFieldHelper.SetErrorBorders(mainWindow.urlTextBox);
+                InputFieldHelper.SetErrorBorders(textBox);
 
-                if (String.IsNullOrWhiteSpace(mainWindow.urlTextBox.Text))
+                if (string.IsNullOrWhiteSpace(textBox.Text))
                 {
                     MsgWindowHelper.ShowErrorMsgWindow("URL input is empty");
-                } 
-                else if (!IsUrlValid(mainWindow.urlTextBox.Text))
+                }
+                else if (!IsUrlValid(textBox.Text))
                 {
                     MsgWindowHelper.ShowErrorMsgWindow("URL is invalid");
                 }
@@ -30,7 +30,7 @@ namespace faabBot.GUI.Validators
                 return false;
             }
 
-            InputFieldHelper.ClearBorders(mainWindow.urlTextBox);
+            InputFieldHelper.ClearBorders(textBox);
             return true;
         }
 
@@ -39,6 +39,10 @@ namespace faabBot.GUI.Validators
             var tryCreateResult = Uri.TryCreate(url, UriKind.Absolute, out _);
             return tryCreateResult;
         }
-        #endregion validators
+        #endregion URL validators
+
+        #region Start selenium validators
+
+        #endregion
     }
 }

@@ -29,7 +29,7 @@ namespace faabBot.GUI
         {
             InitializeComponent();
 
-            Title += String.Format(" v{0:f1}", Globals.Version);
+            Title += string.Format(" v{0:f1}", Globals.Version);
 
             SizesInstance = new();
 
@@ -45,16 +45,16 @@ namespace faabBot.GUI
         private void UrlOKBtn_Click(object sender, RoutedEventArgs e)
         {
             string urlText = urlTextBox.Text;
-            if (MainValidator.UrlValidator(this))
+            if (MainValidator.UrlValidator(urlTextBox))
             {
                 urlTextBox.Clear();
                 if (urlText.Length > Globals.MaxUrlDisplayLength)
                 {
-                    urlStatsLbl.Content = String.Format("URL: {0}...", urlText[..Globals.MaxUrlDisplayLength]);
+                    urlStatsLbl.Content = string.Format("URL: {0}...", urlText[..Globals.MaxUrlDisplayLength]);
                 }
                 else
                 {
-                    urlStatsLbl.Content = String.Format("URL: {0}", urlText);
+                    urlStatsLbl.Content = string.Format("URL: {0}", urlText);
                 }
 
                 urlStatsLbl.ToolTip = urlText;
