@@ -34,15 +34,22 @@ namespace faabBot.GUI.Validators
             return true;
         }
 
+        public static bool IsURLSet(string? url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                MsgWindowHelper.ShowErrorMsgWindow("No URL is set");
+                return false;
+            }
+
+            return true;
+        }
+
         private static bool IsUrlValid(string url)
         {
             var tryCreateResult = Uri.TryCreate(url, UriKind.Absolute, out _);
             return tryCreateResult;
         }
         #endregion URL validators
-
-        #region Start selenium validators
-
-        #endregion
     }
 }

@@ -24,7 +24,9 @@ namespace faabBot.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string? URL;
         private SizesController SizesInstance { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -44,20 +46,21 @@ namespace faabBot.GUI
 
         private void UrlOKBtn_Click(object sender, RoutedEventArgs e)
         {
-            string urlText = urlTextBox.Text;
+            URL = urlTextBox.Text;
+
             if (MainValidator.UrlValidator(urlTextBox))
             {
                 urlTextBox.Clear();
-                if (urlText.Length > Globals.MaxUrlDisplayLength)
+                if (URL.Length > Globals.MaxUrlDisplayLength)
                 {
-                    urlStatsLbl.Content = string.Format("URL: {0}...", urlText[..Globals.MaxUrlDisplayLength]);
+                    urlStatsLbl.Content = string.Format("URL: {0}...", URL[..Globals.MaxUrlDisplayLength]);
                 }
                 else
                 {
-                    urlStatsLbl.Content = string.Format("URL: {0}", urlText);
+                    urlStatsLbl.Content = string.Format("URL: {0}", URL);
                 }
 
-                urlStatsLbl.ToolTip = urlText;
+                urlStatsLbl.ToolTip = URL;
             }
         }
 
@@ -79,6 +82,16 @@ namespace faabBot.GUI
             if (sizesListBox.SelectedItem != null)
             {
                 SizesInstance.Sizes.Remove(sizesListBox.SelectedItem.ToString()!);
+            }
+        }
+
+        private void StartBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainValidator.IsURLSet(URL))
+            {
+                var instance = new SeleniumController(URL!);
+
+                instance.GoToNextCataloguePage();
             }
         }
     }

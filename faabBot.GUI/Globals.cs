@@ -8,6 +8,10 @@ namespace faabBot.GUI
 
         public static int MaxUrlDisplayLength = 40;
 
+        public static int ExplicitWaitInSeconds = 4;
+
+        public static int ImplicitWaitSeconds = 2;
+
         public static List<string> Sizes = new()
         {
             "",

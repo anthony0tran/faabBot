@@ -44,6 +44,6 @@
         <Label x:Name="statusLabel" Content="Status:" HorizontalAlignment="Left" Margin="20,177,0,0" Grid.Row="1" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
         <ProgressBar Margin="20,0,0,0" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Width="440" Height="40" Grid.ColumnSpan="2" />
-        <Button x:Name="startBtn" Content="START" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,20,0" Width="100" Height="40" Background="#FF70FF8C" FontFamily="Microsoft Sans Serif" FontWeight="Bold"/>
+        <Button x:Name="startBtn" Content="START" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,20,0" Width="100" Height="40" Background="#FF70FF8C" FontFamily="Microsoft Sans Serif" FontWeight="Bold" Click="StartBtn_Click"/>
     </Grid>
 </Window>
