@@ -1,4 +1,5 @@
 ﻿using faabBot.GUI.Controllers;
+using faabBot.GUI.EventArguments;
 using faabBot.GUI.Helpers;
 using faabBot.GUI.Validators;
 using faabBot.GUI.Views;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +29,9 @@ namespace faabBot.GUI
         private string? URL;
         private SizeController SizesInstance { get; set; }
         private ProductController ProductInstance { get; set; }
+        public LogMessageHelper LogMessageHelper { get; set; }
+
+        private HashSet<string> ProductQueue { get; set; } = new();
 
         public MainWindow()
         {
@@ -36,9 +41,20 @@ namespace faabBot.GUI
 
             SizesInstance = new();
             ProductInstance = new();
+            LogMessageHelper = new(this);
+
+            LogMessageHelper.LogEventRaised += c_ThresholdReached;
 
             sizesListBox.ItemsSource = SizesInstance.Sizes;
             productsListBox.ItemsSource = ProductInstance.ProductQueue;
+        }
+
+        void c_ThresholdReached(object sender, LogEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                LogMessageHelper.Log(e.Message);
+            });
         }
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
@@ -91,14 +107,25 @@ namespace faabBot.GUI
 
         private void StartBtn_Click(object sender, RoutedEventArgs e)
         {
+            LogMessageHelper.CreateEvent("Session started, please wait...");
+
+            Thread mainThread = new(x => StartSession());
+
+            mainThread.Start();
+
+            foreach (var productUrl in ProductQueue)
+            {
+                ProductInstance.ProductQueue.Add(productUrl);
+            }
+        }
+
+        private void StartSession()
+        {
             if (MainValidator.IsURLSet(URL, urlTextBox))
             {
                 var instance = new SeleniumController(URL!, this);
 
-                foreach (var productUrl in instance.GetAllProductUrls())
-                {
-                    ProductInstance.ProductQueue.Add(productUrl);
-                }
+                ProductQueue = instance.GetAllProductUrls();
 
                 instance.CloseDriver();
             }

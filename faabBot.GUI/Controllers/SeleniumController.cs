@@ -1,4 +1,5 @@
-﻿using faabBot.GUI.Helpers;
+﻿using faabBot.GUI.EventArguments;
+using faabBot.GUI.Helpers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools;
@@ -15,6 +16,7 @@ namespace faabBot.GUI.Controllers
         private readonly ChromeDriver _driver;
         private HashSet<string> _allProductUrls;
         private LogMessageHelper _log;
+        private MainWindow _mainWindow;
 
         public SeleniumController(string url, MainWindow mainWindow)
         {
@@ -22,8 +24,19 @@ namespace faabBot.GUI.Controllers
             _driver = new ChromeDriver();
             _allProductUrls = new();
             _log = new(mainWindow);
+            _mainWindow = mainWindow;
+
+            _log.LogEventRaised += c_ThresholdReached;
 
             _driver.Navigate().GoToUrl(_url);
+        }
+
+        void c_ThresholdReached(object sender, LogEventArgs e)
+        {
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.LogMessageHelper.Log(e.Message);
+            });
         }
 
         public HashSet<string> GetAllProductUrls()
@@ -61,7 +74,8 @@ namespace faabBot.GUI.Controllers
             }
 
             var count = _allProductUrls.Count;
-            _log.Log(string.Format("Found {0} products", count));
+            //_log.Log(string.Format("Found {0} products", count));
+            _log.CreateEvent(string.Format("Found {0} products", count));
 
             return _allProductUrls;
         }
@@ -130,7 +144,8 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.Log(string.Format("{0}, cannot retrieve current catalogue index", e.Message));
+                //_log.Log(string.Format("{0}, cannot retrieve current catalogue index", e.Message));
+                _log.CreateEvent(string.Format("{0}, cannot retrieve current catalogue index", e.Message));
             }
 
             return 0;
@@ -154,19 +169,29 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.Log(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
+                //_log.Log(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
+                _log.CreateEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
             }
 
             if (lastIndexItem == null)
             {
-                lastIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
-                                .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[last()]")));
-                var lastIndexItemInnerHtml = lastIndexItem.GetAttribute("innerHTML");
-
-                if (int.TryParse(lastIndexItemInnerHtml, out var lastIndex))
+                try
                 {
-                    _log.Log(string.Format("Retrieved last catalogue index: {0}", lastIndex));
-                    return lastIndex;
+                    lastIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                                    .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[last()]")));
+                    var lastIndexItemInnerHtml = lastIndexItem.GetAttribute("innerHTML");
+
+                    if (int.TryParse(lastIndexItemInnerHtml, out var lastIndex))
+                    {
+                        //_log.Log(string.Format("Retrieved last catalogue index: {0}", lastIndex));
+                        _log.CreateEvent(string.Format("Retrieved last catalogue index: {0}", lastIndex));
+                        return lastIndex;
+                    }
+                }
+                catch (Exception e)
+                {
+                    //_log.Log(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
+                    _log.CreateEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
                 }
             }
 
@@ -188,7 +213,8 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
             }
 
             if (firstIndexItem == null)
@@ -201,11 +227,13 @@ namespace faabBot.GUI.Controllers
                     ImplicitWait(Globals.ImplicitWaitInSeconds);
 
                     firstIndexItem.Click();
-                    _log.Log(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")));
+                    //_log.Log(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")));
+                    _log.CreateEvent(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")));
                 }
                 catch (Exception e)
                 {
-                    _log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                    //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                    _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
                 }
             }
         }
@@ -229,19 +257,29 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));                
             }
 
             if (firstIndexItem == null)
             {
-                firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
-                                .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]")));
-                var firstIndexItemInnerHtml = firstIndexItem.GetAttribute("innerHTML");
-
-                if (int.TryParse(firstIndexItemInnerHtml, out var firstIndex))
+                try
                 {
-                    _log.Log(string.Format("Retrieved first catalogue index, {0}", firstIndex));
-                    return firstIndex;
+                    firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                                    .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]")));
+                    var firstIndexItemInnerHtml = firstIndexItem.GetAttribute("innerHTML");
+
+                    if (int.TryParse(firstIndexItemInnerHtml, out var firstIndex))
+                    {
+                        //_log.Log(string.Format("Retrieved first catalogue index, {0}", firstIndex));
+                        _log.CreateEvent(string.Format("Retrieved first catalogue index, {0}", firstIndex));
+                        return firstIndex;
+                    }
+                }
+                catch (Exception e)
+                {
+                    //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                    _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
                 }
             }
 
