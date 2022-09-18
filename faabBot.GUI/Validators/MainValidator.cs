@@ -34,11 +34,13 @@ namespace faabBot.GUI.Validators
             return true;
         }
 
-        public static bool IsURLSet(string? url)
+        public static bool IsURLSet(string? url, TextBox textBox)
         {
             if (string.IsNullOrEmpty(url))
             {
+                InputFieldHelper.SetErrorBorders(textBox);
                 MsgWindowHelper.ShowErrorMsgWindow("No URL is set");
+
                 return false;
             }
 

@@ -49,10 +49,10 @@ namespace faabBot.GUI
 
         private void UrlOKBtn_Click(object sender, RoutedEventArgs e)
         {
-            URL = urlTextBox.Text;
-
             if (MainValidator.UrlValidator(urlTextBox))
             {
+                URL = urlTextBox.Text;
+
                 urlTextBox.Clear();
                 if (URL.Length > Globals.MaxUrlDisplayLength)
                 {
@@ -90,7 +90,7 @@ namespace faabBot.GUI
 
         private void StartBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (MainValidator.IsURLSet(URL))
+            if (MainValidator.IsURLSet(URL, urlTextBox))
             {
                 var instance = new SeleniumController(URL!, this);
 
