@@ -91,7 +91,7 @@ namespace faabBot.GUI
             {
                 var instance = new SeleniumController(URL!);
 
-                instance.GoToNextCataloguePage();
+                instance.GetAllProductUrls();
             }
         }
     }

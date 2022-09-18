@@ -60,7 +60,7 @@ namespace faabBot.GUI.Views
             {
                 if (CustomSize)
                 {
-                    if (!String.IsNullOrEmpty(AddSizeTextBox.Text) && AddSizeValidator.isNotAdded(AddSizeTextBox.Text, SizesInstance.Sizes))
+                    if (!String.IsNullOrEmpty(AddSizeTextBox.Text) && AddSizeValidator.IsNotAdded(AddSizeTextBox.Text, SizesInstance.Sizes))
                     {
                         SizesInstance.Sizes.Add(AddSizeTextBox.Text);
                         this.Close();
@@ -70,7 +70,7 @@ namespace faabBot.GUI.Views
                 {
                     if (!String.IsNullOrEmpty(AddSizeComboBox.SelectedItem.ToString()) && AddSizeComboBox.SelectedItem != null)
                     {
-                        if (AddSizeValidator.isNotAdded(AddSizeComboBox.SelectedItem.ToString()!, SizesInstance.Sizes))
+                        if (AddSizeValidator.IsNotAdded(AddSizeComboBox.SelectedItem.ToString()!, SizesInstance.Sizes))
                         {
                             SizesInstance.Sizes.Add(AddSizeComboBox.SelectedItem.ToString()!);
                             this.Close();

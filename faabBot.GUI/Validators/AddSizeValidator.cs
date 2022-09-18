@@ -11,7 +11,7 @@ namespace faabBot.GUI.Validators
 {
     internal static class AddSizeValidator
     {
-        public static bool isNotAdded(string size, ObservableCollection<string> sizes)
+        public static bool IsNotAdded(string size, ObservableCollection<string> sizes)
         {
             if (sizes.Contains(size))
             {
@@ -24,7 +24,7 @@ namespace faabBot.GUI.Validators
 
         public static bool ValidateInputFields(AddSizeWindow addSizeWindow)
         {
-            if (String.IsNullOrWhiteSpace(addSizeWindow.AddSizeTextBox.Text) && addSizeWindow.AddSizeComboBox.SelectedIndex == default)
+            if (string.IsNullOrWhiteSpace(addSizeWindow.AddSizeTextBox.Text) && addSizeWindow.AddSizeComboBox.SelectedIndex == default)
             {
                 MsgWindowHelper.ShowErrorMsgWindow("No size selected");
                 return false;
