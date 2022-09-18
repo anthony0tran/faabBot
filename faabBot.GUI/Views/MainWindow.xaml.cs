@@ -71,6 +71,7 @@ namespace faabBot.GUI
         {
             urlStatsLbl.Content = "URL:";
             urlTextBox.Text = "";
+            URL = null;
             InputFieldHelper.ClearBorders(urlTextBox);
         }
 
