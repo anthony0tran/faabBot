@@ -26,7 +26,7 @@ namespace faabBot.GUI.Controllers
             _driver.Navigate().GoToUrl(_url);
         }
 
-        public void GetAllProductUrls()
+        public HashSet<string> GetAllProductUrls()
         {
             var counter = 0;
             var firstCatalogueIndex = GetFirstCatalogueIndex();
@@ -62,6 +62,8 @@ namespace faabBot.GUI.Controllers
 
             var count = _allProductUrls.Count;
             _log.Log(string.Format("Found {0} products", count));
+
+            return _allProductUrls;
         }
 
         private void GoToNextCataloguePage(int maxCatalogueIndex)

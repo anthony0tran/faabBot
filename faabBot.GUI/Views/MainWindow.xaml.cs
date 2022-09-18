@@ -25,7 +25,8 @@ namespace faabBot.GUI
     public partial class MainWindow : Window
     {
         private string? URL;
-        private SizesController SizesInstance { get; set; }
+        private SizeController SizesInstance { get; set; }
+        private ProductController ProductInstance { get; set; }
 
         public MainWindow()
         {
@@ -34,8 +35,10 @@ namespace faabBot.GUI
             Title += string.Format(" v{0:f1}", Globals.Version);
 
             SizesInstance = new();
+            ProductInstance = new();
 
             sizesListBox.ItemsSource = SizesInstance.Sizes;
+            productsListBox.ItemsSource = ProductInstance.ProductQueue;
         }
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
@@ -91,7 +94,10 @@ namespace faabBot.GUI
             {
                 var instance = new SeleniumController(URL!, this);
 
-                instance.GetAllProductUrls();
+                foreach (var productUrl in instance.GetAllProductUrls())
+                {
+                    ProductInstance.ProductQueue.Add(productUrl);
+                }
 
                 instance.CloseDriver();
             }

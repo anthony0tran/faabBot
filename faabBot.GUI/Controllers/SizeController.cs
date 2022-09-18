@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace faabBot.GUI.Controllers
 {
-    public class SizesController
+    public class SizeController
     {
         public ObservableCollection<string> Sizes { get; set; } = new();
     }

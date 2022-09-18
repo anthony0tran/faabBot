@@ -12,10 +12,10 @@ namespace faabBot.GUI.Views
     public partial class AddSizeWindow : Window
     {
         public bool CustomSize { get; set; } = false;
-        private SizesController SizesInstance { get; set; }
+        private SizeController SizesInstance { get; set; }
         private readonly ListCollectionView SizesCollection;
 
-        public AddSizeWindow(SizesController sizesInstance)
+        public AddSizeWindow(SizeController sizesInstance)
         {
             InitializeComponent();
 
