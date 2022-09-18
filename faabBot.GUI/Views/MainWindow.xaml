@@ -25,7 +25,7 @@
         <ListBox x:Name="productsListBox" Margin="20,42,5,73" Grid.Column="0" Grid.RowSpan="2" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="Microsoft Sans Serif"/>
 
         <Label x:Name="logTextBoxLbl" Content="Console logs" HorizontalAlignment="Left" Margin="5,17,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Microsoft Sans Serif"/>
-        <TextBox x:Name="logTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,43,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="269" Height="132" FontFamily="Microsoft Sans Serif" IsReadOnly="True"/>
+        <TextBox x:Name="logTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,43,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="269" Height="132" FontFamily="Microsoft Sans Serif" IsReadOnly="True"/>
 
         <Label x:Name="urlLbl" Grid.Column="1" Content="URL" HorizontalAlignment="Left" Margin="5,174,0,0" VerticalAlignment="Top" FontFamily="Microsoft Sans Serif" Grid.RowSpan="2"/>
         <TextBox x:Name="urlTextBox" Grid.Column="1" HorizontalAlignment="Left" Margin="5,8,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Height="35" Width="185" FontFamily="Microsoft Sans Serif"/>

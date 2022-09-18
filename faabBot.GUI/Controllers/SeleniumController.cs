@@ -1,10 +1,11 @@
 ﻿using faabBot.GUI.Helpers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.DevTools;
+using OpenQA.Selenium.DevTools.V102.Debugger;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace faabBot.GUI.Controllers
 {
@@ -13,12 +14,14 @@ namespace faabBot.GUI.Controllers
         private readonly string _url;
         private readonly ChromeDriver _driver;
         private HashSet<string> _allProductUrls;
+        private LogMessageHelper _log;
 
-        public SeleniumController(string url)
+        public SeleniumController(string url, MainWindow mainWindow)
         {
             _url = url;
             _driver = new ChromeDriver();
             _allProductUrls = new();
+            _log = new(mainWindow);
 
             _driver.Navigate().GoToUrl(_url);
         }
@@ -56,6 +59,9 @@ namespace faabBot.GUI.Controllers
                     counter++;
                 }
             }
+
+            var count = _allProductUrls.Count;
+            _log.Log(string.Format("Found {0} products", count));
         }
 
         private void GoToNextCataloguePage(int maxCatalogueIndex)
@@ -101,7 +107,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-
+                _log.Log(e.Message);
             }
 
             return productUrls;
@@ -122,7 +128,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                //MsgWindowHelper.ShowErrorMsgWindow(e.Message);
+                _log.Log(string.Format("{0}, cannot retrieve current catalogue index", e.Message));
             }
 
             return 0;
@@ -130,9 +136,10 @@ namespace faabBot.GUI.Controllers
 
         private int GetLastCatalogueIndex()
         {
+            IWebElement? lastIndexItem = null;
             try
             {
-                var lastIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                lastIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
                                 .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[last()]/a")));
                 var lastIdexItemHref = lastIndexItem.GetAttribute("href");
 
@@ -145,7 +152,20 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                //MsgWindowHelper.ShowErrorMsgWindow(e.Message);
+                _log.Log(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
+            }
+
+            if (lastIndexItem == null)
+            {
+                lastIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[last()]")));
+                var lastIndexItemInnerHtml = lastIndexItem.GetAttribute("innerHTML");
+
+                if (int.TryParse(lastIndexItemInnerHtml, out var lastIndex))
+                {
+                    _log.Log(string.Format("Retrieved last catalogue index: {0}", lastIndex));
+                    return lastIndex;
+                }
             }
 
             return 0;
@@ -153,26 +173,48 @@ namespace faabBot.GUI.Controllers
 
         private void ClickFirstCatalogueIndex()
         {
+            IWebElement? firstIndexItem = null;
             try
             {
-                var firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
                                 .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]/a")));
 
                 ImplicitWait(Globals.ImplicitWaitInSeconds);
 
                 firstIndexItem.Click();
+                return;
             }
             catch (Exception e)
             {
+                _log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+            }
 
+            if (firstIndexItem == null)
+            {
+                try
+                {
+                    firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                    .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]")));
+
+                    ImplicitWait(Globals.ImplicitWaitInSeconds);
+
+                    firstIndexItem.Click();
+                    _log.Log(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")));
+                }
+                catch (Exception e)
+                {
+                    _log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                }
             }
         }
 
         private int GetFirstCatalogueIndex()
         {
+            IWebElement? firstIndexItem = null;
+
             try
             {
-                var firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
                                 .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]/a")));
                 var firstIdexItemHref = firstIndexItem.GetAttribute("href");
 
@@ -185,7 +227,20 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                //MsgWindowHelper.ShowErrorMsgWindow(e.Message);
+                _log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+            }
+
+            if (firstIndexItem == null)
+            {
+                firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]")));
+                var firstIndexItemInnerHtml = firstIndexItem.GetAttribute("innerHTML");
+
+                if (int.TryParse(firstIndexItemInnerHtml, out var firstIndex))
+                {
+                    _log.Log(string.Format("Retrieved first catalogue index, {0}", firstIndex));
+                    return firstIndex;
+                }
             }
 
             return 0;
@@ -202,6 +257,11 @@ namespace faabBot.GUI.Controllers
             }
 
             return null;
+        }
+
+        public void CloseDriver()
+        {
+            _driver.Quit();
         }
 
         private string GetBaseURL()

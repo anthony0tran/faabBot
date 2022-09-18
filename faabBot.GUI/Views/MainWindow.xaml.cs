@@ -89,9 +89,11 @@ namespace faabBot.GUI
         {
             if (MainValidator.IsURLSet(URL))
             {
-                var instance = new SeleniumController(URL!);
+                var instance = new SeleniumController(URL!, this);
 
                 instance.GetAllProductUrls();
+
+                instance.CloseDriver();
             }
         }
     }
