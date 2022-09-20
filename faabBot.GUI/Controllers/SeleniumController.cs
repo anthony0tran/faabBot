@@ -14,7 +14,6 @@ namespace faabBot.GUI.Controllers
     {
         private readonly string _url;
         private readonly ChromeDriver _driver;
-        private readonly HashSet<string> _allProductUrls;
         private readonly LogController _log;
         private readonly ProductController _productController;
         private readonly MainWindow _mainWindow;
@@ -28,7 +27,6 @@ namespace faabBot.GUI.Controllers
             _driver = new ChromeDriver();
             _log.NewLogCreated += SeleniumController_LogMessage;
             _productController.NewProductAdded += SeleniumController_AddNewProduct;
-            _allProductUrls = new();
 
             _driver.Navigate().GoToUrl(_url);
         }

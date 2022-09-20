@@ -11,11 +11,22 @@ namespace faabBot.GUI.Controllers
     {
         private readonly MainWindow _mainWindow;
         public event EventHandler<ProductEventArgs>? NewProductAdded;
+        private readonly LogController _log;
         public ObservableHashSet<Product> ProductQueue { get; set; } = new();
 
         public ProductController(MainWindow mainWindow, LogController log)
         {
+            _log = new(mainWindow);
             _mainWindow = mainWindow;
+            _log.NewLogCreated += ProductController_LogMessage;
+        }
+
+        void ProductController_LogMessage(object? sender, LogEventArgs e)
+        {
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.LogInstance.Log(e.Message!, e.Created);
+            });
         }
 
         public void NewProductAddedEvent(Product newProduct)
@@ -26,14 +37,6 @@ namespace faabBot.GUI.Controllers
             };
 
             OnNewProductAddedEvent(args);
-        }
-
-        void ProductController_LogMessage(object? sender, LogEventArgs e)
-        {
-            _mainWindow.Dispatcher.Invoke(() =>
-            {
-                _mainWindow.LogInstance.Log(e.Message!, e.Created);
-            });
         }
 
         public void AddNewProduct(Product newProduct)
@@ -49,7 +52,7 @@ namespace faabBot.GUI.Controllers
             }
             else
             {
-                //_log.NewLogCreatedEvent("Product not added... A product with identical URL already exists", DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("Product not added... {0} already added", newProduct.Url), DateTime.Now);
             }
         }
 
