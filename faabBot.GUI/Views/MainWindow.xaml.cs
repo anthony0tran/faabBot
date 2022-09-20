@@ -66,7 +66,7 @@ namespace faabBot.GUI
 
         private void UrlOKBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (MainValidator.UrlValidator(urlTextBox))
+            if (MainValidator.UrlValidator(urlTextBox, this))
             {
                 URL = urlTextBox.Text;
 
@@ -89,7 +89,7 @@ namespace faabBot.GUI
             urlStatsLbl.Content = "URL:";
             urlTextBox.Text = "";
             URL = null;
-            InputFieldHelper.ClearBorders(urlTextBox);
+            InputFieldHelper.ClearBorders(urlTextBox, this);
         }
 
         private void AddSizeBtn_Click(object sender, RoutedEventArgs e)
@@ -117,7 +117,7 @@ namespace faabBot.GUI
 
         private void StartSession()
         {
-            if (MainValidator.IsURLSet(URL, urlTextBox))
+            if (MainValidator.IsURLSet(URL, urlTextBox, this))
             {
                 var instance = new SeleniumController(URL!, this);
 
