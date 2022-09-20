@@ -311,11 +311,11 @@ namespace faabBot.GUI.Controllers
 
                 var variations = new bool[variationHtmlElements.Count];
 
-                foreach (var variationHtmlElement in variationHtmlElements.Select((value, index) => new {index, value}))
+                foreach (var variationHtmlElement in variationHtmlElements.Select((value, index) => new { index, value }))
                 {
                     var sizes = variationHtmlElement.value.FindElements(By.XPath(".//dd[@class='p-goods-information-action__description']" +
-                                                                           "/ul[@class='p-goods-add-cart-list']" +
-                                                                           "/li[@class='p-goods-add-cart-list__item']"));
+                                                                                 "/ul[@class='p-goods-add-cart-list']" +
+                                                                                 "/li[@class='p-goods-add-cart-list__item']"));
                     var availableSizes = sizes
                         .Where(s => !SizeNoStock(s))
                         .Select(s => s.GetAttribute("data-size"));
