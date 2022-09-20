@@ -1,39 +1,16 @@
 ﻿using faabBot.GUI.EventArguments;
 using System;
 using System.Globalization;
+using System.Windows;
 
 namespace faabBot.GUI.Helpers
 {
-    public class LogMessageHelper
+    internal class LogMessageHelper
     {
-        private readonly MainWindow _mainWindow;
-        public event EventHandler<LogEventArgs>? LogEventRaised;
-
-        public LogMessageHelper(MainWindow mainWindow)
-        {
-            _mainWindow = mainWindow;
-        }
-
-        public void Log(string message, DateTime created)
+        public static void Log(string message, DateTime created, MainWindow mainWindow)
         {
             CultureInfo ci = CultureInfo.InvariantCulture;
-            _mainWindow.logTextBox.Text += string.Format("{0}: {1}\n", created.ToString("HH:mm:ss", ci), message);
-        }
-
-        public void CreateLogEvent(string message, DateTime created)
-        {
-            LogEventArgs args = new()
-            {
-                Message = message,
-                Created = created
-            };
-
-            OnLogEventRaised(args);
-        }
-
-        protected virtual void OnLogEventRaised(LogEventArgs e)
-        {
-            LogEventRaised?.Invoke(this, e);
+            mainWindow.logTextBox.Text += string.Format("{0}: {1}\n", created.ToString("HH:mm:ss", ci), message);
         }
     }
 }

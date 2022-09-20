@@ -9,6 +9,6 @@ namespace faabBot.GUI.EventArguments
     public class LogEventArgs : EventArgs
     {
         public DateTime Created { get; set; }
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace faabBot.GUI
         private string? URL;
         private SizeController SizesInstance { get; set; }
         private ProductController ProductInstance { get; set; }
-        public LogMessageHelper LogMessageHelper { get; set; }
+        public LogController LogInstance { get; set; }
 
         private HashSet<string> ProductQueue { get; set; } = new();
 
@@ -41,9 +41,9 @@ namespace faabBot.GUI
 
             SizesInstance = new();
             ProductInstance = new();
-            LogMessageHelper = new(this);
+            LogInstance = new(this);
 
-            LogMessageHelper.LogEventRaised += MainWindow_LogMessage;
+            LogInstance.LogEventRaised += MainWindow_LogMessage;
 
             sizesListBox.ItemsSource = SizesInstance.Sizes;
             productsListBox.ItemsSource = ProductInstance.ProductQueue;
@@ -53,7 +53,7 @@ namespace faabBot.GUI
         {
             Dispatcher.Invoke(() =>
             {
-                LogMessageHelper.Log(e.Message, e.Created);
+                LogInstance.Log(e.Message!, e.Created);
             });
         }
 
@@ -107,7 +107,7 @@ namespace faabBot.GUI
 
         private void StartBtn_Click(object sender, RoutedEventArgs e)
         {
-            LogMessageHelper.CreateLogEvent("Session started, please wait...", DateTime.Now);
+            LogInstance.CreateLogEvent("Session started, please wait...", DateTime.Now);
 
             Thread mainThread = new(x => StartSession());
 

@@ -15,7 +15,7 @@ namespace faabBot.GUI.Controllers
         private readonly string _url;
         private readonly ChromeDriver _driver;
         private readonly HashSet<string> _allProductUrls;
-        private readonly LogMessageHelper _log;
+        private readonly LogController _log;
         private readonly MainWindow _mainWindow;
 
         public SeleniumController(string url, MainWindow mainWindow)
@@ -35,7 +35,7 @@ namespace faabBot.GUI.Controllers
         {
             _mainWindow.Dispatcher.Invoke(() =>
             {
-                _mainWindow.LogMessageHelper.Log(e.Message, e.Created);
+                _mainWindow.LogInstance.Log(e.Message!, e.Created);
             });
         }
 
@@ -60,7 +60,7 @@ namespace faabBot.GUI.Controllers
                 if (currentCatalogueIndex != firstCatalogueIndex)
                 {
                     ClickFirstCatalogueIndex();
-                    currentCatalogueIndex = GetCurrentCatalogueIndex();
+                    //currentCatalogueIndex = GetCurrentCatalogueIndex();
                 }
 
                 while (counter < lastCatalogueIndex)
