@@ -6,7 +6,9 @@ using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.DevTools.V102.Debugger;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace faabBot.GUI.Controllers
 {
@@ -31,6 +33,7 @@ namespace faabBot.GUI.Controllers
             _driver.Navigate().GoToUrl(_url);
         }
 
+        #region Event Functions
         void SeleniumController_LogMessage(object? sender, LogEventArgs e)
         {
             _mainWindow.Dispatcher.Invoke(() =>
@@ -49,7 +52,9 @@ namespace faabBot.GUI.Controllers
                 }
             });
         }
+        #endregion
 
+        #region Catalogue Functions
         public void GetAllProductUrls()
         {
             var counter = 0;
@@ -291,6 +296,56 @@ namespace faabBot.GUI.Controllers
 
             return null;
         }
+
+        #endregion
+
+        #region Product Functions
+
+        public bool[] DetermineProductToDownload()
+        {
+            try
+            {
+                var variationHtmlElements = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                                            .Until(wd => wd.FindElements(By.XPath("//div[@class='blockMain']" +
+                                                                                                  "/dl[@class='p-goods-information-action ']")));
+
+                var variations = new bool[variationHtmlElements.Count];
+
+                foreach (var variationHtmlElement in variationHtmlElements.Select((value, index) => new {index, value}))
+                {
+                    var sizes = variationHtmlElement.value.FindElements(By.XPath(".//dd[@class='p-goods-information-action__description']" +
+                                                                           "/ul[@class='p-goods-add-cart-list']" +
+                                                                           "/li[@class='p-goods-add-cart-list__item']"));
+                    var availableSizes = sizes
+                        .Where(s => !SizeNoStock(s))
+                        .Select(s => s.GetAttribute("data-size"));
+
+                    variations[variationHtmlElement.index] = _mainWindow.SizesInstance.Sizes.Intersect(availableSizes).Any();
+                }
+                return variations;
+            }
+            catch (Exception e)
+            {
+                _log.NewLogCreatedEvent(string.Format("{0}, failed to retrieve product variations", e.Message), DateTime.Now);
+                return Array.Empty<bool>();
+            }
+        }
+
+        private static bool SizeNoStock(IWebElement sizeElement)
+        {
+            try
+            {
+                sizeElement.FindElement(By.XPath(".//div[@class='cartbox p-goods-add-cart']" +
+                                                 "/div[@class='stock p-goods-add-cart__meta noStock']"));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
 
         public void CloseDriver()
         {

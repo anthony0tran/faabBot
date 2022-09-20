@@ -27,7 +27,7 @@ namespace faabBot.GUI
     public partial class MainWindow : Window
     {
         private string? URL;
-        private SizeController SizesInstance { get; set; }
+        public SizeController SizesInstance { get; set; }
         public ProductController ProductInstance { get; set; }
         public LogController LogInstance { get; set; }
 
@@ -110,22 +110,24 @@ namespace faabBot.GUI
         {
             LogInstance.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
-            Thread mainThread = new(x => StartSession());
+            Thread seleniumThread = new(x => StartSession());
 
-            mainThread.Start();
+            seleniumThread.Start();
         }
 
         private void StartSession()
         {
             if (MainValidator.IsURLSet(URL, urlTextBox, this))
             {
-                var instance = new SeleniumController(URL!, this);
+                var seleniumInstance = new SeleniumController(URL!, this);
 
-                instance.GetAllProductUrls();
+                //seleniumInstance.GetAllProductUrls();
 
-                LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
+                seleniumInstance.DetermineProductToDownload();
 
-                instance.CloseDriver();
+                //LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
+
+                seleniumInstance.CloseDriver();
             }
         }
     }
