@@ -14,7 +14,7 @@ namespace faabBot.GUI.Controllers
         private readonly LogController _log;
         public ObservableHashSet<Product> ProductQueue { get; set; } = new();
 
-        public ProductController(MainWindow mainWindow, LogController log)
+        public ProductController(MainWindow mainWindow)
         {
             _log = new(mainWindow);
             _mainWindow = mainWindow;

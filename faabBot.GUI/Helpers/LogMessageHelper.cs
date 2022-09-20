@@ -11,6 +11,8 @@ namespace faabBot.GUI.Helpers
         {
             CultureInfo ci = CultureInfo.InvariantCulture;
             mainWindow.logTextBox.Text += string.Format("{0}: {1}\n", created.ToString("HH:mm:ss", ci), message);
+
+            mainWindow.logTextBox.ScrollToEnd();
         }
     }
 }

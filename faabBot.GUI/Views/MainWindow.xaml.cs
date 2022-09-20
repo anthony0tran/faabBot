@@ -41,7 +41,7 @@ namespace faabBot.GUI
 
             SizesInstance = new();
             LogInstance = new(this);
-            ProductInstance = new(this, LogInstance);
+            ProductInstance = new(this);
 
 
             LogInstance.NewLogCreated += MainWindow_LogMessage;

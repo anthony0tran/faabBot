@@ -15,7 +15,7 @@ namespace faabBot.GUI.Models
 
         public override string ToString()
         {
-            return string.Format("{0}: {1}", Id, Url);
+            return string.Format("{0}: {1}", Id, Url![Globals.ProductUrlStartSubStringIndex..]);
         }
     }
 }

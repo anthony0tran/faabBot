@@ -23,7 +23,7 @@ namespace faabBot.GUI.Controllers
             _url = url;
             _mainWindow = mainWindow;
             _log = new(mainWindow);
-            _productController = new(mainWindow, _log);
+            _productController = new(mainWindow);
             _driver = new ChromeDriver();
             _log.NewLogCreated += SeleniumController_LogMessage;
             _productController.NewProductAdded += SeleniumController_AddNewProduct;

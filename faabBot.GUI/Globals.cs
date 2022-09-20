@@ -8,6 +8,8 @@ namespace faabBot.GUI
 
         public static int MaxUrlDisplayLength = 70;
 
+        public static int ProductUrlStartSubStringIndex = 15;
+
         public static int ExplicitWaitInSeconds = 2;
 
         public static int ImplicitWaitInSeconds = 1;
