@@ -43,17 +43,17 @@ namespace faabBot.GUI
             ProductInstance = new();
             LogMessageHelper = new(this);
 
-            LogMessageHelper.LogEventRaised += c_ThresholdReached;
+            LogMessageHelper.LogEventRaised += MainWindow_LogMessage;
 
             sizesListBox.ItemsSource = SizesInstance.Sizes;
             productsListBox.ItemsSource = ProductInstance.ProductQueue;
         }
 
-        void c_ThresholdReached(object sender, LogEventArgs e)
+        void MainWindow_LogMessage(object? sender, LogEventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
-                LogMessageHelper.Log(e.Message);
+                LogMessageHelper.Log(e.Message, e.Created);
             });
         }
 
@@ -107,7 +107,7 @@ namespace faabBot.GUI
 
         private void StartBtn_Click(object sender, RoutedEventArgs e)
         {
-            LogMessageHelper.CreateEvent("Session started, please wait...");
+            LogMessageHelper.CreateLogEvent("Session started, please wait...", DateTime.Now);
 
             Thread mainThread = new(x => StartSession());
 

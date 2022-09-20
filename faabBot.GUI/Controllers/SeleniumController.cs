@@ -14,9 +14,9 @@ namespace faabBot.GUI.Controllers
     {
         private readonly string _url;
         private readonly ChromeDriver _driver;
-        private HashSet<string> _allProductUrls;
-        private LogMessageHelper _log;
-        private MainWindow _mainWindow;
+        private readonly HashSet<string> _allProductUrls;
+        private readonly LogMessageHelper _log;
+        private readonly MainWindow _mainWindow;
 
         public SeleniumController(string url, MainWindow mainWindow)
         {
@@ -26,16 +26,16 @@ namespace faabBot.GUI.Controllers
             _log = new(mainWindow);
             _mainWindow = mainWindow;
 
-            _log.LogEventRaised += c_ThresholdReached;
+            _log.LogEventRaised += SeleniumController_LogMessage;
 
             _driver.Navigate().GoToUrl(_url);
         }
 
-        void c_ThresholdReached(object sender, LogEventArgs e)
+        void SeleniumController_LogMessage(object? sender, LogEventArgs e)
         {
             _mainWindow.Dispatcher.Invoke(() =>
             {
-                _mainWindow.LogMessageHelper.Log(e.Message);
+                _mainWindow.LogMessageHelper.Log(e.Message, e.Created);
             });
         }
 
@@ -74,8 +74,7 @@ namespace faabBot.GUI.Controllers
             }
 
             var count = _allProductUrls.Count;
-            //_log.Log(string.Format("Found {0} products", count));
-            _log.CreateEvent(string.Format("Found {0} products", count));
+            _log.CreateLogEvent(string.Format("Found {0} products", count), DateTime.Now);
 
             return _allProductUrls;
         }
@@ -123,7 +122,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.Log(e.Message);
+                _log.CreateLogEvent(string.Format("{0}, failed to retrieve products on page", e.Message), DateTime.Now);
             }
 
             return productUrls;
@@ -144,8 +143,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                //_log.Log(string.Format("{0}, cannot retrieve current catalogue index", e.Message));
-                _log.CreateEvent(string.Format("{0}, cannot retrieve current catalogue index", e.Message));
+                _log.CreateLogEvent(string.Format("{0}, cannot retrieve current catalogue index", e.Message), DateTime.Now);
             }
 
             return 0;
@@ -169,8 +167,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                //_log.Log(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
-                _log.CreateEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
+                _log.CreateLogEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
             }
 
             if (lastIndexItem == null)
@@ -183,15 +180,13 @@ namespace faabBot.GUI.Controllers
 
                     if (int.TryParse(lastIndexItemInnerHtml, out var lastIndex))
                     {
-                        //_log.Log(string.Format("Retrieved last catalogue index: {0}", lastIndex));
-                        _log.CreateEvent(string.Format("Retrieved last catalogue index: {0}", lastIndex));
+                        _log.CreateLogEvent(string.Format("Retrieved last catalogue index: {0}", lastIndex), DateTime.Now);
                         return lastIndex;
                     }
                 }
                 catch (Exception e)
                 {
-                    //_log.Log(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
-                    _log.CreateEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message));
+                    _log.CreateLogEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
                 }
             }
 
@@ -213,8 +208,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
-                _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
             }
 
             if (firstIndexItem == null)
@@ -227,13 +221,11 @@ namespace faabBot.GUI.Controllers
                     ImplicitWait(Globals.ImplicitWaitInSeconds);
 
                     firstIndexItem.Click();
-                    //_log.Log(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")));
-                    _log.CreateEvent(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")));
+                    _log.CreateLogEvent(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")), DateTime.Now);
                 }
                 catch (Exception e)
                 {
-                    //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
-                    _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                    _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
                 }
             }
         }
@@ -257,8 +249,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
-                _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));                
+                _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);                
             }
 
             if (firstIndexItem == null)
@@ -271,15 +262,13 @@ namespace faabBot.GUI.Controllers
 
                     if (int.TryParse(firstIndexItemInnerHtml, out var firstIndex))
                     {
-                        //_log.Log(string.Format("Retrieved first catalogue index, {0}", firstIndex));
-                        _log.CreateEvent(string.Format("Retrieved first catalogue index, {0}", firstIndex));
+                        _log.CreateLogEvent(string.Format("Retrieved first catalogue index, {0}", firstIndex), DateTime.Now);
                         return firstIndex;
                     }
                 }
                 catch (Exception e)
                 {
-                    //_log.Log(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
-                    _log.CreateEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message));
+                    _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
                 }
             }
 

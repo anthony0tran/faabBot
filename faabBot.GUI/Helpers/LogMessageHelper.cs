@@ -6,25 +6,26 @@ namespace faabBot.GUI.Helpers
 {
     public class LogMessageHelper
     {
-        private MainWindow _mainWindow;
-        public event EventHandler<LogEventArgs> LogEventRaised;
+        private readonly MainWindow _mainWindow;
+        public event EventHandler<LogEventArgs>? LogEventRaised;
 
         public LogMessageHelper(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
         }
 
-        public void Log(string message)
+        public void Log(string message, DateTime created)
         {
             CultureInfo ci = CultureInfo.InvariantCulture;
-            _mainWindow.logTextBox.Text += string.Format("{0}: {1}\n", DateTime.Now.ToString("HH:mm:ss", ci), message);
+            _mainWindow.logTextBox.Text += string.Format("{0}: {1}\n", created.ToString("HH:mm:ss", ci), message);
         }
 
-        public void CreateEvent(string message)
+        public void CreateLogEvent(string message, DateTime created)
         {
             LogEventArgs args = new()
             {
-                Message = message
+                Message = message,
+                Created = created
             };
 
             OnLogEventRaised(args);
@@ -32,11 +33,7 @@ namespace faabBot.GUI.Helpers
 
         protected virtual void OnLogEventRaised(LogEventArgs e)
         {
-            EventHandler<LogEventArgs> handler = LogEventRaised;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
+            LogEventRaised?.Invoke(this, e);
         }
     }
 }
