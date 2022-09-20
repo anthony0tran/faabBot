@@ -11,7 +11,7 @@ namespace faabBot.GUI.Controllers
     public class LogController
     {
         private readonly MainWindow _mainWindow;
-        public event EventHandler<LogEventArgs>? LogEventRaised;
+        public event EventHandler<LogEventArgs>? NewLogCreated;
 
         public LogController(MainWindow mainWindow)
         {
@@ -23,7 +23,7 @@ namespace faabBot.GUI.Controllers
             LogMessageHelper.Log(message, created, _mainWindow);
         }
 
-        public void CreateLogEvent(string message, DateTime created)
+        public void NewLogCreatedEvent(string message, DateTime created)
         {
             LogEventArgs args = new()
             {
@@ -31,12 +31,12 @@ namespace faabBot.GUI.Controllers
                 Created = created
             };
 
-            OnLogEventRaised(args);
+            OnNewLogCreatedEvent(args);
         }
 
-        protected virtual void OnLogEventRaised(LogEventArgs e)
+        protected virtual void OnNewLogCreatedEvent(LogEventArgs @event)
         {
-            LogEventRaised?.Invoke(this, e);
+            NewLogCreated?.Invoke(this, @event);
         }
     }
 }

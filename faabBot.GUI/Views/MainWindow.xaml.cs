@@ -28,7 +28,7 @@ namespace faabBot.GUI
     {
         private string? URL;
         private SizeController SizesInstance { get; set; }
-        private ProductController ProductInstance { get; set; }
+        public ProductController ProductInstance { get; set; }
         public LogController LogInstance { get; set; }
 
         private HashSet<string> ProductQueue { get; set; } = new();
@@ -40,10 +40,11 @@ namespace faabBot.GUI
             Title += string.Format(" v{0:f1}", Globals.Version);
 
             SizesInstance = new();
-            ProductInstance = new();
             LogInstance = new(this);
+            ProductInstance = new(this, LogInstance);
 
-            LogInstance.LogEventRaised += MainWindow_LogMessage;
+
+            LogInstance.NewLogCreated += MainWindow_LogMessage;
 
             sizesListBox.ItemsSource = SizesInstance.Sizes;
             productsListBox.ItemsSource = ProductInstance.ProductQueue;
@@ -107,16 +108,11 @@ namespace faabBot.GUI
 
         private void StartBtn_Click(object sender, RoutedEventArgs e)
         {
-            LogInstance.CreateLogEvent("Session started, please wait...", DateTime.Now);
+            LogInstance.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
             Thread mainThread = new(x => StartSession());
 
             mainThread.Start();
-
-            foreach (var productUrl in ProductQueue)
-            {
-                ProductInstance.ProductQueue.Add(productUrl);
-            }
         }
 
         private void StartSession()
@@ -125,7 +121,9 @@ namespace faabBot.GUI
             {
                 var instance = new SeleniumController(URL!, this);
 
-                ProductQueue = instance.GetAllProductUrls();
+                instance.GetAllProductUrls();
+
+                LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
 
                 instance.CloseDriver();
             }

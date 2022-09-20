@@ -16,17 +16,19 @@ namespace faabBot.GUI.Controllers
         private readonly ChromeDriver _driver;
         private readonly HashSet<string> _allProductUrls;
         private readonly LogController _log;
+        private readonly ProductController _productController;
         private readonly MainWindow _mainWindow;
 
         public SeleniumController(string url, MainWindow mainWindow)
         {
             _url = url;
-            _driver = new ChromeDriver();
-            _allProductUrls = new();
-            _log = new(mainWindow);
             _mainWindow = mainWindow;
-
-            _log.LogEventRaised += SeleniumController_LogMessage;
+            _log = new(mainWindow);
+            _productController = new(mainWindow, _log);
+            _driver = new ChromeDriver();
+            _log.NewLogCreated += SeleniumController_LogMessage;
+            _productController.NewProductAdded += SeleniumController_AddNewProduct;
+            _allProductUrls = new();
 
             _driver.Navigate().GoToUrl(_url);
         }
@@ -39,7 +41,18 @@ namespace faabBot.GUI.Controllers
             });
         }
 
-        public HashSet<string> GetAllProductUrls()
+        void SeleniumController_AddNewProduct(object? sender, ProductEventArgs e)
+        {
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                if (e.Product != null)
+                {
+                    _mainWindow.ProductInstance.AddNewProduct(e.Product);
+                }
+            });
+        }
+
+        public void GetAllProductUrls()
         {
             var counter = 0;
             var firstCatalogueIndex = GetFirstCatalogueIndex();
@@ -53,30 +66,24 @@ namespace faabBot.GUI.Controllers
                     ClickFirstCatalogueIndex();
                 }
 
-                _allProductUrls.UnionWith(GetProductsOnPage());
+                GetProductsOnPage();
             }
             else
             {
                 if (currentCatalogueIndex != firstCatalogueIndex)
                 {
                     ClickFirstCatalogueIndex();
-                    //currentCatalogueIndex = GetCurrentCatalogueIndex();
                 }
 
                 while (counter < lastCatalogueIndex)
                 {
-                    _allProductUrls.UnionWith(GetProductsOnPage());
+                    GetProductsOnPage();
 
                     GoToNextCataloguePage(lastCatalogueIndex);
 
                     counter++;
                 }
             }
-
-            var count = _allProductUrls.Count;
-            _log.CreateLogEvent(string.Format("Found {0} products", count), DateTime.Now);
-
-            return _allProductUrls;
         }
 
         private void GoToNextCataloguePage(int maxCatalogueIndex)
@@ -101,10 +108,8 @@ namespace faabBot.GUI.Controllers
             }
         }
 
-        private HashSet<string> GetProductsOnPage()
+        private void GetProductsOnPage()
         {
-            var productUrls = new HashSet<string>();
-
             try
             {
                 var productHtmlElements = ExplicitWait(Globals.ExplicitWaitInSeconds)
@@ -117,15 +122,16 @@ namespace faabBot.GUI.Controllers
 
                 foreach (var productHtmlElement in productHtmlElements)
                 {
-                    productUrls.Add(productHtmlElement.GetAttribute("href"));
+                    _productController.NewProductAddedEvent(new Models.Product()
+                    {
+                        Url = productHtmlElement.GetAttribute("href")
+                    });
                 }
             }
             catch (Exception e)
             {
-                _log.CreateLogEvent(string.Format("{0}, failed to retrieve products on page", e.Message), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("{0}, failed to retrieve products on page", e.Message), DateTime.Now);
             }
-
-            return productUrls;
         }
 
         private int GetCurrentCatalogueIndex()
@@ -143,7 +149,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.CreateLogEvent(string.Format("{0}, cannot retrieve current catalogue index", e.Message), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve current catalogue index", e.Message), DateTime.Now);
             }
 
             return 0;
@@ -167,7 +173,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.CreateLogEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
             }
 
             if (lastIndexItem == null)
@@ -180,13 +186,13 @@ namespace faabBot.GUI.Controllers
 
                     if (int.TryParse(lastIndexItemInnerHtml, out var lastIndex))
                     {
-                        _log.CreateLogEvent(string.Format("Retrieved last catalogue index: {0}", lastIndex), DateTime.Now);
+                        _log.NewLogCreatedEvent(string.Format("Retrieved last catalogue index: {0}", lastIndex), DateTime.Now);
                         return lastIndex;
                     }
                 }
                 catch (Exception e)
                 {
-                    _log.CreateLogEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
                 }
             }
 
@@ -208,7 +214,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
             }
 
             if (firstIndexItem == null)
@@ -221,11 +227,11 @@ namespace faabBot.GUI.Controllers
                     ImplicitWait(Globals.ImplicitWaitInSeconds);
 
                     firstIndexItem.Click();
-                    _log.CreateLogEvent(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")), DateTime.Now);
                 }
                 catch (Exception e)
                 {
-                    _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
                 }
             }
         }
@@ -249,7 +255,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);                
+                _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
             }
 
             if (firstIndexItem == null)
@@ -262,13 +268,13 @@ namespace faabBot.GUI.Controllers
 
                     if (int.TryParse(firstIndexItemInnerHtml, out var firstIndex))
                     {
-                        _log.CreateLogEvent(string.Format("Retrieved first catalogue index, {0}", firstIndex), DateTime.Now);
+                        _log.NewLogCreatedEvent(string.Format("Retrieved first catalogue index, {0}", firstIndex), DateTime.Now);
                         return firstIndex;
                     }
                 }
                 catch (Exception e)
                 {
-                    _log.CreateLogEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
                 }
             }
 
