@@ -9,7 +9,7 @@ namespace faabBot.GUI.Helpers
     {
         public static void Log(string message, DateTime created, MainWindow mainWindow)
         {
-            CultureInfo ci = CultureInfo.InvariantCulture;
+            var ci = CultureInfo.InvariantCulture;
             mainWindow.logTextBox.Text += string.Format("{0}: {1}\n", created.ToString("HH:mm:ss", ci), message);
 
             mainWindow.logTextBox.ScrollToEnd();

@@ -1,6 +1,7 @@
 ﻿using faabBot.GUI.Controllers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
@@ -43,26 +44,48 @@ namespace faabBot.GUI.Helpers
             }
         }
 
-        public static void CreateSubImageDirectory(string subDirectoryName, object o, LogController log)
+        public static void CreateSubImageDirectory(MainWindow mainWindow, LogController log)
         {
+            var ci = CultureInfo.InvariantCulture;
+            string? subDirectoryName;
+
+            switch (mainWindow.SizesInstance.Sizes.Any(), !string.IsNullOrWhiteSpace(mainWindow.ClientName))
+            {
+                case (false, false):
+                    subDirectoryName = string.Format("{0} ({1})", DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), "ALL SIZES");
+                    break;
+                case (false, true):
+                    subDirectoryName = string.Format("{0} {1} ({2})", mainWindow.ClientName, DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), "ALL SIZES");
+                    break;
+                case (true, false):
+                    subDirectoryName = string.Format("{0} ({1})", DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), string.Join(", ", mainWindow.SizesInstance.Sizes));
+                    break;
+                case (true, true):
+                    subDirectoryName = string.Format("{0} {1} ({2})", mainWindow.ClientName, DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), string.Join(", ", mainWindow.SizesInstance.Sizes));
+                    break;
+            }
+
             try
             {
-                var mainImageDirectory = GetMainImageDirectory(o);
-                if (Directory.Exists(mainImageDirectory))
+                var mainImageDirectory = GetMainImageDirectory(mainWindow);
+                if (!Directory.Exists(mainImageDirectory))
                 {
-                    var subDirectoryLocation = string.Format("{0}\\{1}", mainImageDirectory, subDirectoryName);
-                    var directoryInfo = Directory.CreateDirectory(subDirectoryLocation);
-                    log.NewLogCreatedEvent(string.Format("{0} added at: {1}", subDirectoryName, directoryInfo.FullName), DateTime.Now);
-                }
-                else
-                {
-                    CreateMainImageDirectory(o, log);
+                    CreateMainImageDirectory(mainWindow, log);
                 }
 
+                var subDirectoryLocation = string.Format("{0}\\{1}", mainImageDirectory, subDirectoryName);
+
+                if (Directory.Exists(subDirectoryLocation))
+                {
+                    return;
+                }
+
+                var directoryInfo = Directory.CreateDirectory(subDirectoryLocation);
+                log.NewLogCreatedEvent(string.Format("{0} added at: {1}", subDirectoryName, directoryInfo.FullName), DateTime.Now);
             }
-            catch
+            catch (Exception e)
             {
-                log.NewLogCreatedEvent("Error: Could not create sub image directory", DateTime.Now);
+                log.NewLogCreatedEvent(string.Format("{0} {1}", e, "Could not create subDirectory"), DateTime.Now);
             }
         }
     }

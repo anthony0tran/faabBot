@@ -31,7 +31,7 @@ namespace faabBot.GUI
         public ProductController ProductInstance { get; set; }
         public LogController LogInstance { get; set; }
 
-        private HashSet<string> ProductQueue { get; set; } = new();
+        public string? ClientName { get; set; }
 
         public MainWindow()
         {
@@ -115,7 +115,7 @@ namespace faabBot.GUI
 
         private void StartSession()
         {
-            DirectoryHelper.CreateSubImageDirectory("TESTTEST",this, LogInstance);
+            DirectoryHelper.CreateSubImageDirectory(this, LogInstance);
 
             //if (MainValidator.IsURLSet(URL, urlTextBox, this))
             //{
@@ -127,6 +127,25 @@ namespace faabBot.GUI
 
             //    seleniumInstance.CloseDriver();
             //}
+        }
+
+        private void ClientNameClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            clientNameLabel.Content = "Client:";
+            clientNameTxtBox.Text = "";
+            ClientName = null;
+            InputFieldHelper.ClearBorders(clientNameTxtBox, this);
+        }
+
+        private void ClientNameOkBtn_Click(object sender, RoutedEventArgs e)
+        {            
+            if (MainValidator.ClientNameValidator(clientNameTxtBox, this))
+            {
+                ClientName = clientNameTxtBox.Text;
+                clientNameLabel.Content += ClientName;
+
+                clientNameTxtBox.Clear();
+            }
         }
     }
 }

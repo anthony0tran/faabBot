@@ -1,12 +1,8 @@
 ﻿using faabBot.GUI.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace faabBot.GUI.Validators
 {
@@ -54,5 +50,39 @@ namespace faabBot.GUI.Validators
             return tryCreateResult;
         }
         #endregion URL validators
+
+        public static bool ClientNameValidator(TextBox textBox, Window window)
+        {
+            if (string.IsNullOrWhiteSpace(textBox.Text) || !IsValidFileName(textBox.Text))
+            {
+                InputFieldHelper.SetErrorBorders(textBox, window);
+
+                if (string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    MsgWindowHelper.ShowErrorMsgWindow("Client input is empty");
+                }
+
+                if (!IsValidFileName(textBox.Text) && !string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    MsgWindowHelper.ShowErrorMsgWindow("Client name contains invalid filename characters");
+                }
+
+                return false;
+            }
+
+            InputFieldHelper.ClearBorders(textBox, window);
+            return true;
+        }
+
+        public static bool IsValidFileName(string name)
+        {
+            var invalidFileNameChars = System.IO.Path.GetInvalidFileNameChars();
+            if (name.ToCharArray().Intersect(invalidFileNameChars).Any())
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
