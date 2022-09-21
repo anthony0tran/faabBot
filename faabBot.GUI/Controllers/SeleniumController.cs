@@ -19,6 +19,7 @@ namespace faabBot.GUI.Controllers
         private readonly LogController _log;
         private readonly ProductController _productController;
         private readonly MainWindow _mainWindow;
+        private readonly HttpClientController _httpClientController;
 
         public SeleniumController(string url, MainWindow mainWindow)
         {
@@ -29,6 +30,7 @@ namespace faabBot.GUI.Controllers
             _driver = new ChromeDriver();
             _log.NewLogCreated += SeleniumController_LogMessage;
             _productController.NewProductAdded += SeleniumController_AddNewProduct;
+            _httpClientController = new(mainWindow);
 
             _log.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
@@ -347,10 +349,9 @@ namespace faabBot.GUI.Controllers
             }
         }
 
-        public void DownloadVariations()
+        public void DownloadVariations(string subImageDirectory)
         {
-            var availableVariationArray = DetermineProductsToDownload();
-
+            var availableVariationArray = DetermineProductsToDownload();            
             try
             {
                 var variationHtmlElements = ExplicitWait(Globals.ExplicitWaitInSeconds)
@@ -373,6 +374,12 @@ namespace faabBot.GUI.Controllers
                         variationHtmlElement.value.Click();
 
                         //Dowload the image
+                        var selectedProductImgSrc = GetSelectedProductImgSrc();
+                        if (selectedProductImgSrc != null)
+                        {
+                            ImplicitWait(Globals.ImplicitWaitInSeconds);
+                            _httpClientController.DownloadImage(selectedProductImgSrc, GetProductName(), subImageDirectory, variationHtmlElement.index);
+                        }
                     }
                 }
             }
@@ -396,6 +403,23 @@ namespace faabBot.GUI.Controllers
             catch (Exception e)
             {
                 _log.NewLogCreatedEvent(string.Format("{0}, failed to retrieve main product image", e.Message), DateTime.Now);
+                return null;
+            }
+        }
+
+        public string? GetProductName()
+        {
+            try
+            {
+                var mainProductImageElement = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                                                            .Until(wd => wd
+                                                                            .FindElement(By.XPath("//h1[@class='p-goods-information__heading']")));
+
+                return mainProductImageElement.GetAttribute("innerHTML");
+            }
+            catch (Exception e)
+            {
+                _log.NewLogCreatedEvent(string.Format("{0}, failed to retrieve product name", e.Message), DateTime.Now);
                 return null;
             }
         }

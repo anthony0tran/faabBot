@@ -115,18 +115,18 @@ namespace faabBot.GUI
 
         private void StartSession()
         {
-            DirectoryHelper.CreateSubImageDirectory(this, LogInstance);
+            if (MainValidator.IsURLSet(URL, urlTextBox, this))
+            {
+                var seleniumInstance = new SeleniumController(URL!, this);
 
-            //if (MainValidator.IsURLSet(URL, urlTextBox, this))
-            //{
-            //    var seleniumInstance = new SeleniumController(URL!, this);
+                //Start scraping here
+                var subImageDirectory = DirectoryHelper.CreateSubImageDirectory(this, LogInstance);
+                seleniumInstance.DownloadVariations(subImageDirectory);
 
-            //    //Start scraping here
+                LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
 
-            //    LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
-
-            //    seleniumInstance.CloseDriver();
-            //}
+                seleniumInstance.CloseDriver();
+            }
         }
 
         private void ClientNameClearBtn_Click(object sender, RoutedEventArgs e)

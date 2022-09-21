@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
@@ -27,6 +28,11 @@ namespace faabBot.GUI.Helpers
 
         public static void CreateMainImageDirectory(object o, LogController log)
         {
+
+            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.WorldSid, null);
+            System.Security.Principal.NTAccount acct = sid.Translate(typeof(System.Security.Principal.NTAccount)) as System.Security.Principal.NTAccount;
+            string strEveryoneAccount = acct.ToString();
+
             try
             {
                 var mainImageDirectory = GetMainImageDirectory(o);
@@ -35,7 +41,12 @@ namespace faabBot.GUI.Helpers
                     return;
                 }
 
+                DirectorySecurity securityRules = new();
+                securityRules.AddAccessRule(new FileSystemAccessRule(strEveryoneAccount, FileSystemRights.FullControl, AccessControlType.Allow));
+
                 var directoryInfo = Directory.CreateDirectory(mainImageDirectory);
+                directoryInfo.SetAccessControl(securityRules);
+                
                 log.NewLogCreatedEvent(string.Format("Maindirectory added at: {0}", directoryInfo.FullName), DateTime.Now);
             }
             catch
@@ -44,10 +55,14 @@ namespace faabBot.GUI.Helpers
             }
         }
 
-        public static void CreateSubImageDirectory(MainWindow mainWindow, LogController log)
+        public static string? CreateSubImageDirectory(MainWindow mainWindow, LogController log)
         {
             var ci = CultureInfo.InvariantCulture;
             string? subDirectoryName;
+
+            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.WorldSid, null);
+            System.Security.Principal.NTAccount acct = sid.Translate(typeof(System.Security.Principal.NTAccount)) as System.Security.Principal.NTAccount;
+            string strEveryoneAccount = acct.ToString();
 
             switch (mainWindow.SizesInstance.Sizes.Any(), !string.IsNullOrWhiteSpace(mainWindow.ClientName))
             {
@@ -77,15 +92,20 @@ namespace faabBot.GUI.Helpers
 
                 if (Directory.Exists(subDirectoryLocation))
                 {
-                    return;
+                    return subDirectoryLocation;
                 }
+                DirectorySecurity securityRules = new();
+                securityRules.AddAccessRule(new FileSystemAccessRule(strEveryoneAccount, FileSystemRights.FullControl, AccessControlType.Allow));
 
                 var directoryInfo = Directory.CreateDirectory(subDirectoryLocation);
+                directoryInfo.SetAccessControl(securityRules);
                 log.NewLogCreatedEvent(string.Format("{0} added at: {1}", subDirectoryName, directoryInfo.FullName), DateTime.Now);
+                return subDirectoryLocation;
             }
             catch (Exception e)
             {
                 log.NewLogCreatedEvent(string.Format("{0} {1}", e, "Could not create subDirectory"), DateTime.Now);
+                return null;
             }
         }
     }
