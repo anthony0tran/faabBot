@@ -30,6 +30,8 @@ namespace faabBot.GUI.Controllers
             _log.NewLogCreated += SeleniumController_LogMessage;
             _productController.NewProductAdded += SeleniumController_AddNewProduct;
 
+            _log.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
+
             _driver.Navigate().GoToUrl(_url);
         }
 
@@ -301,7 +303,7 @@ namespace faabBot.GUI.Controllers
 
         #region Product Functions
 
-        public bool[] DetermineProductToDownload()
+        private bool[] DetermineProductsToDownload()
         {
             try
             {
@@ -345,11 +347,65 @@ namespace faabBot.GUI.Controllers
             }
         }
 
+        public void DownloadVariations()
+        {
+            var availableVariationArray = DetermineProductsToDownload();
+
+            try
+            {
+                var variationHtmlElements = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                                            .Until(wd => wd.FindElements(By.XPath("//ul[@id='photoThimb']" +
+                                                                                                  "/li[contains(@class, 'p-goods-thumbnail-list__item')]" +
+                                                                                                  "/div[contains(@class, 'p-goods-photograph')]" +
+                                                                                                  "/span[contains(@class, 'p-goods-photograph__image-container')]" +
+                                                                                                  "/img[contains(@class, 'p-goods-photograph__image')]")));
+
+                foreach (var variationHtmlElement in variationHtmlElements.Select((value, index) => new { index, value }))
+                {
+                    if (variationHtmlElement.index >= availableVariationArray.Length)
+                    {
+                        break;
+                    }
+
+                    if (availableVariationArray[variationHtmlElement.index])
+                    {
+                        ImplicitWait(Globals.ImplicitWaitInSeconds);
+                        variationHtmlElement.value.Click();
+
+                        //Dowload the image
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _log.NewLogCreatedEvent(string.Format("{0}, failed to retrieve product thumbnails", e.Message), DateTime.Now);
+            }
+        }
+
+        public string? GetSelectedProductImgSrc()
+        {
+            try
+            {
+                var mainProductImageElement = ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                                                            .Until(wd => wd
+                                                                            .FindElement(By.Id("photoMain"))
+                                                                            .FindElement(By.XPath(".//img")));
+
+                return mainProductImageElement.GetAttribute("src");
+            }
+            catch (Exception e)
+            {
+                _log.NewLogCreatedEvent(string.Format("{0}, failed to retrieve main product image", e.Message), DateTime.Now);
+                return null;
+            }
+        }
+
         #endregion
 
         public void CloseDriver()
         {
             _driver.Quit();
+            _log.NewLogCreatedEvent(string.Format("Session closed..."), DateTime.Now);
         }
 
         private string GetBaseURL()

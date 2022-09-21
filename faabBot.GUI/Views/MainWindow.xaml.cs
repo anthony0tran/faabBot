@@ -108,8 +108,6 @@ namespace faabBot.GUI
 
         private void StartBtn_Click(object sender, RoutedEventArgs e)
         {
-            LogInstance.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
-
             Thread seleniumThread = new(x => StartSession());
 
             seleniumThread.Start();
@@ -117,18 +115,18 @@ namespace faabBot.GUI
 
         private void StartSession()
         {
-            if (MainValidator.IsURLSet(URL, urlTextBox, this))
-            {
-                var seleniumInstance = new SeleniumController(URL!, this);
+            DirectoryHelper.CreateSubImageDirectory("TESTTEST",this, LogInstance);
 
-                //seleniumInstance.GetAllProductUrls();
+            //if (MainValidator.IsURLSet(URL, urlTextBox, this))
+            //{
+            //    var seleniumInstance = new SeleniumController(URL!, this);
 
-                seleniumInstance.DetermineProductToDownload();
+            //    //Start scraping here
 
-                //LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
+            //    LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
 
-                seleniumInstance.CloseDriver();
-            }
+            //    seleniumInstance.CloseDriver();
+            //}
         }
     }
 }
