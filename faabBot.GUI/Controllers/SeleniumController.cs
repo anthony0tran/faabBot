@@ -1,5 +1,6 @@
 ﻿using faabBot.GUI.EventArguments;
 using faabBot.GUI.Helpers;
+using faabBot.GUI.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools;
@@ -32,7 +33,7 @@ namespace faabBot.GUI.Controllers
             _log.NewLogCreated += SeleniumController_LogMessage;
             _productController.NewProductAdded += SeleniumController_AddNewProduct;
             _httpClientController = new(mainWindow);
-            ImplicitWait(Globals.ImplicitWaitInSeconds);
+            ImplicitWait(Globals.ImplicitWaitInMilliseconds);
 
             _log.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
@@ -65,26 +66,33 @@ namespace faabBot.GUI.Controllers
             var subImageDirectory = string.Empty;
             GetAllProductUrls();
 
+            _log.NewLogCreatedEvent(string.Format("found {0} products", _mainWindow.ProductInstance.ProductQueue.Count), DateTime.Now);
+
             if (_mainWindow.ProductInstance.ProductQueue.Any())
             {
                 subImageDirectory = DirectoryHelper.CreateSubImageDirectory(_mainWindow, _mainWindow.LogInstance);
             }
 
-            foreach (var product in _mainWindow.ProductInstance.ProductQueue)
+            while (_mainWindow.ProductInstance.ProductQueue.Any())
             {
                 try
                 {
-                    _driver.Navigate().GoToUrl(product.Url);
+                    _driver.Navigate().GoToUrl(_mainWindow.ProductInstance.ProductQueue.Last().Url);
 
-                    if (product.Url != null && subImageDirectory != string.Empty)
+                    if (_mainWindow.ProductInstance.ProductQueue.Last().Url != null && subImageDirectory != string.Empty)
                     {
                         DownloadVariations(subImageDirectory!);
                     }
                 }
                 catch (Exception e)
                 {
-                    _log.NewLogCreatedEvent(String.Format("{0}, Failed to navigate to product page", e.Message), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("{0}, Failed to navigate to product page", e.Message), DateTime.Now);
                 }
+
+                _mainWindow.Dispatcher.Invoke(() =>
+                {
+                    _mainWindow.ProductInstance.RemoveProduct(_mainWindow.ProductInstance.ProductQueue.Last());
+                });
             }
         }
 
@@ -247,7 +255,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("{0}, trying to first catalogue page button", e.Message), DateTime.Now);
             }
 
             if (firstIndexItem == null)
@@ -262,7 +270,7 @@ namespace faabBot.GUI.Controllers
                 }
                 catch (Exception e)
                 {
-                    _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("{0}, trying to first catalogue page button", e.Message), DateTime.Now);
                 }
             }
         }
@@ -286,7 +294,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("{0}, trying to first catalogue page button", e.Message), DateTime.Now);
             }
 
             if (firstIndexItem == null)
@@ -305,7 +313,7 @@ namespace faabBot.GUI.Controllers
                 }
                 catch (Exception e)
                 {
-                    _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve first catalogue index", e.Message), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("{0}, trying to first catalogue page button", e.Message), DateTime.Now);
                 }
             }
 
@@ -475,7 +483,7 @@ namespace faabBot.GUI.Controllers
 
         private void ImplicitWait(int durationInSeconds)
         {
-            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(durationInSeconds);
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(durationInSeconds);
         }
     }
 }

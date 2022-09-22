@@ -122,8 +122,6 @@ namespace faabBot.GUI
                 //Start scraping here
                 seleniumInstance.ScrapeAllProducts();
 
-                LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
-
                 seleniumInstance.CloseDriver();
             }
         }
