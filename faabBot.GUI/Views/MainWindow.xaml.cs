@@ -120,8 +120,7 @@ namespace faabBot.GUI
                 var seleniumInstance = new SeleniumController(URL!, this);
 
                 //Start scraping here
-                var subImageDirectory = DirectoryHelper.CreateSubImageDirectory(this, LogInstance);
-                seleniumInstance.DownloadVariations(subImageDirectory);
+                seleniumInstance.ScrapeAllProducts();
 
                 LogInstance.NewLogCreatedEvent(string.Format("found {0} products", ProductInstance.ProductQueue.Count), DateTime.Now);
 

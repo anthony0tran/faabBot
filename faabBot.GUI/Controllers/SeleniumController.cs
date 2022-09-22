@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace faabBot.GUI.Controllers
 {
@@ -31,6 +32,7 @@ namespace faabBot.GUI.Controllers
             _log.NewLogCreated += SeleniumController_LogMessage;
             _productController.NewProductAdded += SeleniumController_AddNewProduct;
             _httpClientController = new(mainWindow);
+            ImplicitWait(Globals.ImplicitWaitInSeconds);
 
             _log.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
@@ -57,6 +59,34 @@ namespace faabBot.GUI.Controllers
             });
         }
         #endregion
+
+        public void ScrapeAllProducts()
+        {
+            var subImageDirectory = string.Empty;
+            GetAllProductUrls();
+
+            if (_mainWindow.ProductInstance.ProductQueue.Any())
+            {
+                subImageDirectory = DirectoryHelper.CreateSubImageDirectory(_mainWindow, _mainWindow.LogInstance);
+            }
+
+            foreach (var product in _mainWindow.ProductInstance.ProductQueue)
+            {
+                try
+                {
+                    _driver.Navigate().GoToUrl(product.Url);
+
+                    if (product.Url != null && subImageDirectory != string.Empty)
+                    {
+                        DownloadVariations(subImageDirectory!);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.NewLogCreatedEvent(String.Format("{0}, Failed to navigate to product page", e.Message), DateTime.Now);
+                }
+            }
+        }
 
         #region Catalogue Functions
         public void GetAllProductUrls()
@@ -103,8 +133,6 @@ namespace faabBot.GUI.Controllers
                 {
                     var nextPageBtn = ExplicitWait(Globals.ExplicitWaitInSeconds)
                                         .Until(wd => wd.FindElement(By.ClassName("c-pager__next")));
-
-                    ImplicitWait(Globals.ImplicitWaitInSeconds);
 
                     nextPageBtn.Click();
                 }
@@ -214,8 +242,6 @@ namespace faabBot.GUI.Controllers
                 firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
                                 .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]/a")));
 
-                ImplicitWait(Globals.ImplicitWaitInSeconds);
-
                 firstIndexItem.Click();
                 return;
             }
@@ -230,8 +256,6 @@ namespace faabBot.GUI.Controllers
                 {
                     firstIndexItem = ExplicitWait(Globals.ExplicitWaitInSeconds)
                                     .Until(wd => wd.FindElement(By.XPath("//ol[@class='c-pager-page-number-list']/li[1]")));
-
-                    ImplicitWait(Globals.ImplicitWaitInSeconds);
 
                     firstIndexItem.Click();
                     _log.NewLogCreatedEvent(string.Format("Retrieved first catalogue index: {0}", firstIndexItem.GetAttribute("innerHTML")), DateTime.Now);
@@ -317,14 +341,22 @@ namespace faabBot.GUI.Controllers
 
                 foreach (var variationHtmlElement in variationHtmlElements.Select((value, index) => new { index, value }))
                 {
+
                     var sizes = variationHtmlElement.value.FindElements(By.XPath(".//dd[@class='p-goods-information-action__description']" +
-                                                                                 "/ul[@class='p-goods-add-cart-list']" +
-                                                                                 "/li[@class='p-goods-add-cart-list__item']"));
+                                                                                                     "/ul[@class='p-goods-add-cart-list']" +
+                                                                                                     "/li[@class='p-goods-add-cart-list__item']"));
                     var availableSizes = sizes
                         .Where(s => !SizeNoStock(s))
                         .Select(s => s.GetAttribute("data-size"));
 
-                    variations[variationHtmlElement.index] = _mainWindow.SizesInstance.Sizes.Intersect(availableSizes).Any();
+                    if (_mainWindow.SizesInstance.Sizes.Any())
+                    {
+                        variations[variationHtmlElement.index] = _mainWindow.SizesInstance.Sizes.Intersect(availableSizes).Any();
+                    }
+                    else
+                    {
+                        variations[variationHtmlElement.index] = availableSizes.Any();
+                    }
                 }
                 return variations;
             }
@@ -351,7 +383,7 @@ namespace faabBot.GUI.Controllers
 
         public void DownloadVariations(string subImageDirectory)
         {
-            var availableVariationArray = DetermineProductsToDownload();            
+            var availableVariationArray = DetermineProductsToDownload();
             try
             {
                 var variationHtmlElements = ExplicitWait(Globals.ExplicitWaitInSeconds)
@@ -370,14 +402,12 @@ namespace faabBot.GUI.Controllers
 
                     if (availableVariationArray[variationHtmlElement.index])
                     {
-                        ImplicitWait(Globals.ImplicitWaitInSeconds);
                         variationHtmlElement.value.Click();
 
                         //Dowload the image
                         var selectedProductImgSrc = GetSelectedProductImgSrc();
                         if (selectedProductImgSrc != null)
                         {
-                            ImplicitWait(Globals.ImplicitWaitInSeconds);
                             _httpClientController.DownloadImage(selectedProductImgSrc, GetProductName(), subImageDirectory, variationHtmlElement.index);
                         }
                     }
