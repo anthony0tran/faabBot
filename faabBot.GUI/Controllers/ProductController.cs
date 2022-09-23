@@ -61,7 +61,7 @@ namespace faabBot.GUI.Controllers
             }
             else
             {
-                _log.NewLogCreatedEvent(string.Format("Product not added... {0} already added", newProduct.Url), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("Product not added... {0} already added", GetProductIdFromUrl(newProduct.Url)), DateTime.Now);
             }
         }
 

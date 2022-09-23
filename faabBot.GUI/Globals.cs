@@ -6,6 +6,8 @@ namespace faabBot.GUI
     {
         public static double Version = 1.0;
 
+        public static bool DevelopersMode = false;
+
         public static int MaxUrlDisplayLength = 70;
 
         public static int ExplicitWaitInSeconds = 2;

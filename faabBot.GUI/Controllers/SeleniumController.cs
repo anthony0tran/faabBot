@@ -29,7 +29,27 @@ namespace faabBot.GUI.Controllers
             _mainWindow = mainWindow;
             _log = new(mainWindow);
             _productController = new(mainWindow);
-            _driver = new ChromeDriver();
+
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.DisableButtons();
+            });
+
+            if (Globals.DevelopersMode)
+            {
+                _driver = new ChromeDriver();
+            }
+            else
+            {
+                var chromeOptions = new ChromeOptions();
+                chromeOptions.AddArgument("--headless");
+
+                var chromeDriverService = ChromeDriverService.CreateDefaultService();
+                chromeDriverService.HideCommandPromptWindow = true;
+
+                _driver = new ChromeDriver(chromeDriverService, chromeOptions);
+            }
+
             _log.NewLogCreated += SeleniumController_LogMessage;
             _productController.NewProductAdded += SeleniumController_AddNewProduct;
             _httpClientController = new(mainWindow);
@@ -38,6 +58,8 @@ namespace faabBot.GUI.Controllers
             _log.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
             _driver.Navigate().GoToUrl(_url);
+
+
         }
 
         #region Event Functions
@@ -483,6 +505,11 @@ namespace faabBot.GUI.Controllers
         {
             _driver.Quit();
             _log.NewLogCreatedEvent(string.Format("Session closed..."), DateTime.Now);
+
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.EnableButtons();
+            });
         }
 
         private string GetBaseURL()

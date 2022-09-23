@@ -77,6 +77,28 @@ namespace faabBot.GUI
             statusLabel.Content = string.Format("Status: {0}", statusString);
         }
 
+        public void DisableButtons()
+        {
+            startBtn.IsEnabled = false;
+            addSizeBtn.IsEnabled = false;
+            deleteSizeBtn.IsEnabled = false;
+            urlClearBtn.IsEnabled = false;
+            urlOKBtn.IsEnabled = false;
+            clientNameClearBtn.IsEnabled = false;
+            clientNameOkBtn.IsEnabled = false;
+        }
+
+        public void EnableButtons()
+        {
+            startBtn.IsEnabled = true;
+            addSizeBtn.IsEnabled = true;
+            deleteSizeBtn.IsEnabled = true;
+            urlClearBtn.IsEnabled = true;
+            urlOKBtn.IsEnabled = true;
+            clientNameClearBtn.IsEnabled = true;
+            clientNameOkBtn.IsEnabled = true;
+        }
+
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
         {
             AboutWindow aboutWindow = new();
