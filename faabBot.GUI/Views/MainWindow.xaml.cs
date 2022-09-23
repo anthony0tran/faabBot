@@ -49,7 +49,7 @@ namespace faabBot.GUI
             LogInstance.NewLogCreated += MainWindow_LogMessage;
 
             sizesListBox.ItemsSource = SizesInstance.Sizes;
-            SizesInstance.Sizes.Add("ALL SIZES");
+            SizesInstance.Sizes.Add("ALL AVAILABLE SIZES");
             productsListBox.ItemsSource = ProductInstance.ProductQueue;
             Status = StatusType.Status.NotStarted;
 
@@ -125,7 +125,7 @@ namespace faabBot.GUI
 
                 if (!SizesInstance.Sizes.Any())
                 {
-                    SizesInstance.Sizes.Add("ALL SIZES");
+                    SizesInstance.Sizes.Add("ALL AVAILABLE SIZES");
                 }
             }
         }

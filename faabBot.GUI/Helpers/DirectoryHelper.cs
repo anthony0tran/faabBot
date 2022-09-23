@@ -67,10 +67,10 @@ namespace faabBot.GUI.Helpers
             switch (mainWindow.SizesInstance.Sizes.Any(), !string.IsNullOrWhiteSpace(mainWindow.ClientName))
             {
                 case (false, false):
-                    subDirectoryName = string.Format("{0} ({1})", DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), "ALL SIZES");
+                    subDirectoryName = string.Format("{0} ({1})", DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), "ALL AVAILABLE SIZES");
                     break;
                 case (false, true):
-                    subDirectoryName = string.Format("{0} {1} ({2})", mainWindow.ClientName, DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), "ALL SIZES");
+                    subDirectoryName = string.Format("{0} {1} ({2})", mainWindow.ClientName, DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), "ALL AVAILABLE SIZES");
                     break;
                 case (true, false):
                     subDirectoryName = string.Format("{0} ({1})", DateTime.Now.ToString("dd-MM-yyyy HH.mm", ci), string.Join(", ", mainWindow.SizesInstance.Sizes));

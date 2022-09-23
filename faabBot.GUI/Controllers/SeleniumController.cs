@@ -109,15 +109,15 @@ namespace faabBot.GUI.Controllers
         #region Catalogue Functions
         public void GetAllProductUrls()
         {
-            var counter = 0;
-            var firstCatalogueIndex = GetFirstCatalogueIndex();
-            var lastCatalogueIndex = GetLastCatalogueIndex();
-            var currentCatalogueIndex = GetCurrentCatalogueIndex();
-
             _mainWindow.Dispatcher.Invoke(() =>
             {
                 _mainWindow.SetStatus(EnumTypes.StatusType.Status.FindingProducts);
             });
+
+            var counter = 0;
+            var firstCatalogueIndex = GetFirstCatalogueIndex();
+            var lastCatalogueIndex = GetLastCatalogueIndex();
+            var currentCatalogueIndex = GetCurrentCatalogueIndex();
 
             if (lastCatalogueIndex == 0)
             {
@@ -231,7 +231,7 @@ namespace faabBot.GUI.Controllers
             }
             catch (Exception e)
             {
-                _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
+                _log.NewLogCreatedEvent(string.Format("{0}, trying to find last catalogue page button", e.Message), DateTime.Now);
             }
 
             if (lastIndexItem == null)
@@ -250,7 +250,7 @@ namespace faabBot.GUI.Controllers
                 }
                 catch (Exception e)
                 {
-                    _log.NewLogCreatedEvent(string.Format("{0}, cannot retrieve last catalogue index", e.Message), DateTime.Now);
+                    _log.NewLogCreatedEvent(string.Format("{0}, trying to find last catalogue page button", e.Message), DateTime.Now);
                 }
             }
 
@@ -372,7 +372,7 @@ namespace faabBot.GUI.Controllers
                         .Where(s => !SizeNoStock(s))
                         .Select(s => s.GetAttribute("data-size"));
 
-                    if (_mainWindow.SizesInstance.Sizes.Where(s => s != "ALL SIZES").Any())
+                    if (_mainWindow.SizesInstance.Sizes.Where(s => s != "ALL AVAILABLE SIZES").Any())
                     {
                         variations[variationHtmlElement.index] = _mainWindow.SizesInstance.Sizes.Intersect(availableSizes).Any();
                     }

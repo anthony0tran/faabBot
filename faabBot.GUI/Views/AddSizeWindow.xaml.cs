@@ -64,9 +64,9 @@ namespace faabBot.GUI.Views
                     {
                         SizesInstance.Sizes.Add(AddSizeTextBox.Text);
 
-                        if (SizesInstance.Sizes.Contains("ALL SIZES"))
+                        if (SizesInstance.Sizes.Contains("ALL AVAILABLE SIZES"))
                         {
-                            SizesInstance.Sizes.Remove("ALL SIZES");
+                            SizesInstance.Sizes.Remove("ALL AVAILABLE SIZES");
                         }
 
                         Close();
@@ -80,9 +80,9 @@ namespace faabBot.GUI.Views
                         {
                             SizesInstance.Sizes.Add(AddSizeComboBox.SelectedItem.ToString()!);
 
-                            if (SizesInstance.Sizes.Contains("ALL SIZES"))
+                            if (SizesInstance.Sizes.Contains("ALL AVAILABLE SIZES"))
                             {
-                                SizesInstance.Sizes.Remove("ALL SIZES");
+                                SizesInstance.Sizes.Remove("ALL AVAILABLE SIZES");
                             }
 
                             Close();
