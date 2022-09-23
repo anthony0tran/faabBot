@@ -11,6 +11,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
 
 namespace faabBot.GUI.Controllers
 {
@@ -29,6 +31,10 @@ namespace faabBot.GUI.Controllers
             _mainWindow = mainWindow;
             _log = new(mainWindow);
             _productController = new(mainWindow);
+            _log.NewLogCreated += SeleniumController_LogMessage;
+            _productController.NewProductAdded += SeleniumController_AddNewProduct;
+            _httpClientController = new(mainWindow);
+
 
             _mainWindow.Dispatcher.Invoke(() =>
             {
@@ -38,12 +44,17 @@ namespace faabBot.GUI.Controllers
 
             if (Globals.DevelopersMode)
             {
+                new DriverManager().SetUpDriver(new ChromeConfig());
+
                 _driver = new ChromeDriver();
             }
             else
             {
+                var chromeLocation = new DriverManager().SetUpDriver(new ChromeConfig());
                 var chromeOptions = new ChromeOptions();
                 chromeOptions.AddArgument("--headless");
+
+                _log.NewLogCreatedEvent(string.Format("Detected chrome version: {0}", GetChromeVersion(chromeLocation)), DateTime.Now);
 
                 var chromeDriverService = ChromeDriverService.CreateDefaultService();
                 chromeDriverService.HideCommandPromptWindow = true;
@@ -51,15 +62,21 @@ namespace faabBot.GUI.Controllers
                 _driver = new ChromeDriver(chromeDriverService, chromeOptions);
             }
 
-            _log.NewLogCreated += SeleniumController_LogMessage;
-            _productController.NewProductAdded += SeleniumController_AddNewProduct;
-            _httpClientController = new(mainWindow);
             ImplicitWait(Globals.ImplicitWaitInMilliseconds);
-
 
             _log.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
             _driver.Navigate().GoToUrl(_url);
+        }
+
+        public static string GetChromeVersion(string chromeDriverLocation)
+        {
+            var chromeString = "Chrome\\";
+            var startIndex = chromeDriverLocation.IndexOf(chromeString);
+            var chromeStringWithExtension = chromeDriverLocation.Substring(startIndex + chromeString.Length);
+            var breakIndex = chromeStringWithExtension.IndexOf("\\");
+
+            return chromeStringWithExtension[..breakIndex];
         }
 
         #region Event Functions
