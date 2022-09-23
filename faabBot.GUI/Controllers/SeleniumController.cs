@@ -70,6 +70,11 @@ namespace faabBot.GUI.Controllers
 
             if (_mainWindow.ProductInstance.ProductQueue.Any())
             {
+                _mainWindow.Dispatcher.Invoke(() =>
+                {
+                    _mainWindow.SetStatus(EnumTypes.StatusType.Status.DownloadingProducts);
+                });
+
                 subImageDirectory = DirectoryHelper.CreateSubImageDirectory(_mainWindow, _mainWindow.LogInstance);
             }
 
@@ -94,6 +99,11 @@ namespace faabBot.GUI.Controllers
                     _mainWindow.ProductInstance.RemoveProduct(_mainWindow.ProductInstance.ProductQueue.Last());
                 });
             }
+
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.SetStatus(EnumTypes.StatusType.Status.NotStarted);
+            });
         }
 
         #region Catalogue Functions
@@ -103,6 +113,11 @@ namespace faabBot.GUI.Controllers
             var firstCatalogueIndex = GetFirstCatalogueIndex();
             var lastCatalogueIndex = GetLastCatalogueIndex();
             var currentCatalogueIndex = GetCurrentCatalogueIndex();
+
+            _mainWindow.Dispatcher.Invoke(() =>
+            {
+                _mainWindow.SetStatus(EnumTypes.StatusType.Status.FindingProducts);
+            });
 
             if (lastCatalogueIndex == 0)
             {
@@ -357,7 +372,7 @@ namespace faabBot.GUI.Controllers
                         .Where(s => !SizeNoStock(s))
                         .Select(s => s.GetAttribute("data-size"));
 
-                    if (_mainWindow.SizesInstance.Sizes.Any())
+                    if (_mainWindow.SizesInstance.Sizes.Where(s => s != "ALL SIZES").Any())
                     {
                         variations[variationHtmlElement.index] = _mainWindow.SizesInstance.Sizes.Intersect(availableSizes).Any();
                     }

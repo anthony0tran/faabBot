@@ -1,4 +1,5 @@
 ﻿using faabBot.GUI.Controllers;
+using faabBot.GUI.EnumTypes;
 using faabBot.GUI.EventArguments;
 using faabBot.GUI.Helpers;
 using faabBot.GUI.Validators;
@@ -30,6 +31,7 @@ namespace faabBot.GUI
         public SizeController SizesInstance { get; set; }
         public ProductController ProductInstance { get; set; }
         public LogController LogInstance { get; set; }
+        public StatusType.Status Status { get; set; }
 
         public string? ClientName { get; set; }
 
@@ -47,7 +49,11 @@ namespace faabBot.GUI
             LogInstance.NewLogCreated += MainWindow_LogMessage;
 
             sizesListBox.ItemsSource = SizesInstance.Sizes;
+            SizesInstance.Sizes.Add("ALL SIZES");
             productsListBox.ItemsSource = ProductInstance.ProductQueue;
+            Status = StatusType.Status.NotStarted;
+
+            SetStatus(StatusType.Status.NotStarted);
         }
 
         void MainWindow_LogMessage(object? sender, LogEventArgs e)
@@ -56,6 +62,19 @@ namespace faabBot.GUI
             {
                 LogInstance.Log(e.Message!, e.Created);
             });
+        }
+
+        public void SetStatus(StatusType.Status status)
+        {
+            Status = status;
+            string? statusString = status switch
+            {
+                StatusType.Status.NotStarted => "Not started",
+                StatusType.Status.FindingProducts => "Finding products to download",
+                StatusType.Status.DownloadingProducts => "Downloading products",
+                _ => "Error",
+            };
+            statusLabel.Content = string.Format("Status: {0}", statusString);
         }
 
         private void AboutBtn_Click(object sender, RoutedEventArgs e)
@@ -103,6 +122,11 @@ namespace faabBot.GUI
             if (sizesListBox.SelectedItem != null)
             {
                 SizesInstance.Sizes.Remove(sizesListBox.SelectedItem.ToString()!);
+
+                if (!SizesInstance.Sizes.Any())
+                {
+                    SizesInstance.Sizes.Add("ALL SIZES");
+                }
             }
         }
 
@@ -139,7 +163,7 @@ namespace faabBot.GUI
             if (MainValidator.ClientNameValidator(clientNameTxtBox, this))
             {
                 ClientName = clientNameTxtBox.Text;
-                clientNameLabel.Content += ClientName;
+                clientNameLabel.Content =string.Format("Client: {0}", ClientName);
 
                 clientNameTxtBox.Clear();
             }

@@ -51,7 +51,7 @@ namespace faabBot.GUI.Views
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -60,20 +60,32 @@ namespace faabBot.GUI.Views
             {
                 if (CustomSize)
                 {
-                    if (!String.IsNullOrEmpty(AddSizeTextBox.Text) && AddSizeValidator.IsNotAdded(AddSizeTextBox.Text, SizesInstance.Sizes))
+                    if (!string.IsNullOrEmpty(AddSizeTextBox.Text) && AddSizeValidator.IsNotAdded(AddSizeTextBox.Text, SizesInstance.Sizes))
                     {
                         SizesInstance.Sizes.Add(AddSizeTextBox.Text);
-                        this.Close();
+
+                        if (SizesInstance.Sizes.Contains("ALL SIZES"))
+                        {
+                            SizesInstance.Sizes.Remove("ALL SIZES");
+                        }
+
+                        Close();
                     }
                 }
                 else
                 {
-                    if (!String.IsNullOrEmpty(AddSizeComboBox.SelectedItem.ToString()) && AddSizeComboBox.SelectedItem != null)
+                    if (!string.IsNullOrEmpty(AddSizeComboBox.SelectedItem.ToString()) && AddSizeComboBox.SelectedItem != null)
                     {
                         if (AddSizeValidator.IsNotAdded(AddSizeComboBox.SelectedItem.ToString()!, SizesInstance.Sizes))
                         {
                             SizesInstance.Sizes.Add(AddSizeComboBox.SelectedItem.ToString()!);
-                            this.Close();
+
+                            if (SizesInstance.Sizes.Contains("ALL SIZES"))
+                            {
+                                SizesInstance.Sizes.Remove("ALL SIZES");
+                            }
+
+                            Close();
                         }
 
                     }
