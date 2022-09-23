@@ -33,6 +33,7 @@ namespace faabBot.GUI.Controllers
             _mainWindow.Dispatcher.Invoke(() =>
             {
                 _mainWindow.DisableButtons();
+                _mainWindow.mainProgressBar.Value = 0;
             });
 
             if (Globals.DevelopersMode)
@@ -55,11 +56,10 @@ namespace faabBot.GUI.Controllers
             _httpClientController = new(mainWindow);
             ImplicitWait(Globals.ImplicitWaitInMilliseconds);
 
+
             _log.NewLogCreatedEvent("Session started, please wait...", DateTime.Now);
 
             _driver.Navigate().GoToUrl(_url);
-
-
         }
 
         #region Event Functions
@@ -87,6 +87,9 @@ namespace faabBot.GUI.Controllers
         {
             var subImageDirectory = string.Empty;
             GetAllProductUrls();
+
+            var totalProductCount = _mainWindow.ProductInstance.ProductQueue.Count;
+            var processedCount = 0d;
 
             _log.NewLogCreatedEvent(string.Format("found {0} products", _mainWindow.ProductInstance.ProductQueue.Count), DateTime.Now);
 
@@ -116,8 +119,11 @@ namespace faabBot.GUI.Controllers
                     _log.NewLogCreatedEvent(string.Format("{0}, Failed to navigate to product page", e.Message), DateTime.Now);
                 }
 
+                processedCount++;
+
                 _mainWindow.Dispatcher.Invoke(() =>
                 {
+                    _mainWindow.UpdateProgressBar(processedCount / totalProductCount);
                     _mainWindow.ProductInstance.RemoveProduct(_mainWindow.ProductInstance.ProductQueue.Last());
                 });
             }

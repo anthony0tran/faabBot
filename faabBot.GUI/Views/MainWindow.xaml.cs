@@ -77,6 +77,11 @@ namespace faabBot.GUI
             statusLabel.Content = string.Format("Status: {0}", statusString);
         }
 
+        public void UpdateProgressBar(double progressPercentage)
+        {
+            mainProgressBar.Value = progressPercentage;
+        }
+
         public void DisableButtons()
         {
             startBtn.IsEnabled = false;
@@ -111,6 +116,7 @@ namespace faabBot.GUI
             {
                 URL = urlTextBox.Text;
 
+                mainProgressBar.Value = 0;
                 urlTextBox.Clear();
                 if (URL.Length > Globals.MaxUrlDisplayLength)
                 {
@@ -130,6 +136,7 @@ namespace faabBot.GUI
             urlStatsLbl.Content = "URL:";
             urlTextBox.Text = "";
             URL = null;
+            mainProgressBar.Value = 0;
             InputFieldHelper.ClearBorders(urlTextBox, this);
         }
 

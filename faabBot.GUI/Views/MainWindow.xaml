@@ -43,7 +43,7 @@
         <Label x:Name="ProgressLbl" Content="Progress:" HorizontalAlignment="Left" Margin="20,167,0,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Label x:Name="statusLabel" Content="Status:" HorizontalAlignment="Left" Margin="20,193,0,0" Grid.Row="1" VerticalAlignment="Top" Grid.RowSpan="2"/>
 
-        <ProgressBar Margin="20,52,0,0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="897" Height="40" Grid.ColumnSpan="2" />
+        <ProgressBar x:Name="mainProgressBar" Margin="20,52,0,0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="897" Height="40" Grid.ColumnSpan="2" Minimum="0" Maximum="1"/>
         <Button x:Name="startBtn" Content="START" Grid.Column="1" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="405,52,0,0" Width="100" Height="40" Background="#FF70FF8C" FontFamily="Microsoft Sans Serif" FontWeight="Bold" Click="StartBtn_Click"/>
         <TextBox x:Name="clientNameTxtBox" HorizontalAlignment="Left" Margin="6,53,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="408" Grid.Column="1" Grid.Row="1"/>
         <Label x:Name="clientNameLbl" Grid.Column="1" Content="Client name" HorizontalAlignment="Left" Margin="6,30,0,0" Grid.Row="1" VerticalAlignment="Top"/>
