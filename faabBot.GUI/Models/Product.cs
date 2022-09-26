@@ -17,7 +17,9 @@ namespace faabBot.GUI.Models
 
         public override string ToString()
         {
-            return string.Format("{0}: {1}", Id, Url![^Globals.MaxUrlDisplayLength..]);
+            return Url!.Length > Globals.MaxUrlDisplayLength ? 
+                string.Format("{0}: {1}", Id, Url![^Globals.MaxUrlDisplayLength..]) :
+                string.Format("{0}: {1}", Id, Url);
         }
     }
 }
