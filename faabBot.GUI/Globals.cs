@@ -4,7 +4,7 @@ namespace faabBot.GUI
 {
     internal class Globals
     {
-        public static double Version = 1.0;
+        public static double Version = 1.1;
 
         public static bool DevelopersMode = false;
 
@@ -12,7 +12,7 @@ namespace faabBot.GUI
 
         public static int ExplicitWaitInSeconds = 2;
 
-        public static int ImplicitWaitInMilliseconds = 100;
+        public static int ImplicitWaitInMilliseconds = 50;
 
         public static string AssemblyName = "faabBot.GUI.dll";
 

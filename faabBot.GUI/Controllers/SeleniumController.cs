@@ -206,7 +206,7 @@ namespace faabBot.GUI.Controllers
                 }
                 catch (Exception e)
                 {
-                    MsgWindowHelper.ShowErrorMsgWindow(e.Message);
+                    _log.NewLogCreatedEvent(string.Format("{0}", e.Message), DateTime.Now);
                 }
             }
         }
