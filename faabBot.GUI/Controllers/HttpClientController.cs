@@ -1,10 +1,7 @@
 ﻿using System.Net.Http;
-using System.Windows;
 using System.Drawing;
 using faabBot.GUI.Helpers;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Globalization;
 using System;
 using System.Text;
 

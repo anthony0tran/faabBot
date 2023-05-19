@@ -1,16 +1,10 @@
 ﻿using faabBot.GUI.EventArguments;
 using faabBot.GUI.Helpers;
-using faabBot.GUI.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.DevTools;
-using OpenQA.Selenium.DevTools.V102.Debugger;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 
@@ -52,7 +46,7 @@ namespace faabBot.GUI.Controllers
             {
                 var chromeLocation = new DriverManager().SetUpDriver(new ChromeConfig());
                 var chromeOptions = new ChromeOptions();
-                chromeOptions.AddArgument("--headless");
+                chromeOptions.AddArgument("--headless=new");
 
                 _log.NewLogCreatedEvent(string.Format("Detected chrome version: {0}", GetChromeVersion(chromeLocation)), DateTime.Now);
 
