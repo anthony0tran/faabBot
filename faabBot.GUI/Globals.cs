@@ -12,7 +12,7 @@ namespace faabBot.GUI
 
         public static int ExplicitWaitInSeconds = 2;
 
-        public static int ImplicitWaitInMilliseconds = 50;
+        public static int ImplicitWaitInMilliseconds = 30;
 
         public static string AssemblyName = "faabBot.GUI.dll";
 

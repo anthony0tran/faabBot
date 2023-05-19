@@ -4,6 +4,8 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
@@ -13,7 +15,7 @@ namespace faabBot.GUI.Controllers
     public class SeleniumController
     {
         private readonly string _url;
-        private readonly ChromeDriver _driver;
+        private ChromeDriver _driver;
         private readonly LogController _log;
         private readonly ProductController _productController;
         private readonly MainWindow _mainWindow;
@@ -53,7 +55,7 @@ namespace faabBot.GUI.Controllers
                 var chromeDriverService = ChromeDriverService.CreateDefaultService();
                 chromeDriverService.HideCommandPromptWindow = true;
 
-                _driver = new ChromeDriver(chromeDriverService, chromeOptions);
+                _driver = new ChromeDriver(chromeDriverService, chromeOptions, TimeSpan.FromMinutes(5));
             }
 
             ImplicitWait(Globals.ImplicitWaitInMilliseconds);
@@ -118,12 +120,19 @@ namespace faabBot.GUI.Controllers
             {
                 try
                 {
-                    _driver.Navigate().GoToUrl(_mainWindow.ProductInstance.ProductQueue.Last().Url);
+                    if (_mainWindow.ProductInstance.ProductQueue.Last().Url is null)
+                    {
+                        return;
+                    }
+
+                    SetDriver(_mainWindow.ProductInstance.ProductQueue.Last().Url!);
 
                     if (_mainWindow.ProductInstance.ProductQueue.Last().Url != null && subImageDirectory != string.Empty)
                     {
                         DownloadVariations(subImageDirectory!);
                     }
+
+                    _driver.Dispose();
                 }
                 catch (Exception e)
                 {
@@ -174,14 +183,50 @@ namespace faabBot.GUI.Controllers
                     ClickFirstCatalogueIndex();
                 }
 
-                while (counter < lastCatalogueIndex)
+                var catalogueUrls = GetCatalogueHrefs();
+                _driver.Dispose();
+
+                if (catalogueUrls is null)
                 {
+                    return;
+                }
+
+                foreach (var url in catalogueUrls)
+                {
+                    SetDriver(url);
                     GetProductsOnPage();
-
-                    GoToNextCataloguePage(lastCatalogueIndex);
-
+                    _driver.Dispose();
                     counter++;
                 }
+            }
+        }
+
+        private void SetDriver(string url)
+        {
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("--headless=new");
+
+            var chromeDriverService = ChromeDriverService.CreateDefaultService();
+            chromeDriverService.HideCommandPromptWindow = true;
+
+            _driver = new ChromeDriver(chromeDriverService, chromeOptions, TimeSpan.FromMinutes(5));
+
+            _driver.Navigate().GoToUrl(url);
+        }
+
+        private IList<string>? GetCatalogueHrefs()
+        {
+            try
+            {
+                return ExplicitWait(Globals.ExplicitWaitInSeconds)
+                                .Until(wd => wd.FindElements(By.XPath("//ol[@class='c-pager-page-number-list']/li/a[@class='c-pager-page-number-list-item__link']")))
+                                .Select(x => x.GetAttribute("href"))
+                                .ToList();
+            }
+            catch (Exception e)
+            {
+                _log.NewLogCreatedEvent(string.Format("{0}, could not find catalogue href", e.Message), DateTime.Now);
+                return null;
             }
         }
 
